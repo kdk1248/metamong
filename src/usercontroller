@@ -1,0 +1,52 @@
+package com.metamong.user;
+
+import com.metamong.user.UserController;
+import com.metamong.user.SignUpRequest;
+import com.metamong.user.UserInfoResponse;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.http.MediaType;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Test
+    public void testSignUp() throws Exception {
+        SignUpRequest signUpRequest = new SignUpRequest();
+        signUpRequest.setName("John Doe");
+        signUpRequest.setEmail("john.doe@example.com");
+        signUpRequest.setPassword("password");
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/api/users/sign-up")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signUpRequest)))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("회원 가입 성공"));
+    }
+
+    @Test
+    public void testGetUserInfo() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/api/users/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value("John Doe"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.email").value("john.doe@example.com"));
+    }
+
+    @Test
+    public void testDeleteUser() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.delete("/api/users/1"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string("회원이 삭제 되었습니다."));
+    }
+}
