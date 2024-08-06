@@ -1,79 +1,51 @@
 package com.metamong.movie.controller;
 
-import com.meta.ProjectMovie.model.Review;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
-@RestController
+@Controller
 @RequestMapping("/api/review")
 public class ReviewController {
 
-    private List<Review> reviewList = new ArrayList<>();
-
     @PostMapping("/add")
     @ResponseBody
-    public String addReview(@RequestBody Review review) {
-        reviewList.add(review);
+    public String addReview() {
         return "댓글이 추가됨";
     }
 
     @PutMapping("/update/{id}")
     @ResponseBody
-    public String updateReview(@PathVariable Long id, @RequestBody Review updatedReview) {
-        for (Review review : reviewList) {
-            if (review.getReview_id().equals(id)) {
-                review.setReview_contents(updatedReview.getReview_contents());
-                review.setReview_star(updatedReview.getReview_star());
-                review.setReview_modifiedAt(updatedReview.getReview_modifiedAt());
-                return "특정 댓글이 수정됨";
-            }
-        }
-        return "댓글을 찾을 수 없음";
+    public String updateReview() {
+        return "특정 댓글이 수정됨";
     }
 
     @DeleteMapping("/remove/{id}")
     @ResponseBody
-    public String deleteReview(@PathVariable Long id) {
-        reviewList.removeIf(review -> review.getReview_id().equals(id));
-        return "댓글이 삭제됨";
+    public String deleteReview() {
+        return "특정 댓글이 삭제됨";
     }
 
     @GetMapping("/show")
     @ResponseBody
-    public List<Review> showReviews() {
-        return reviewList;
+    public String showReviews() {
+        return "전체 댓글 조회";
     }
 
     @GetMapping("/show/{id}")
     @ResponseBody
-    public Review showReviewById(@PathVariable Long id) {
-        return reviewList.stream().filter(review -> review.getReview_id().equals(id)).findFirst().orElse(null);
+    public String showReviewById() {
+        return "특정 댓글 조회";
     }
 
     @PutMapping("/{id}/like")
     @ResponseBody
-    public String likeReview(@PathVariable Long id) {
-        for (Review review : reviewList) {
-            if (review.getReview_id().equals(id)) {
-                review.setReview_like(review.getReview_like() + 1);
-                return "특정 댓글에 좋아요";
-            }
-        }
-        return "댓글을 찾을 수 없음";
+    public String likeReview() {
+        return "특정 댓글에 좋아요";
     }
 
     @PutMapping("/{id}/dislike")
     @ResponseBody
-    public String dislikeReview(@PathVariable Long id) {
-        for (Review review : reviewList) {
-            if (review.getReview_id().equals(id)) {
-                review.setReview_dislike(review.getReview_dislike() + 1);
-                return "특정 댓글에 싫어요";
-            }
-        }
-        return "댓글을 찾을 수 없음";
+    public String dislikeReview() {
+        return "특정 댓글에 싫어요";
     }
 }
