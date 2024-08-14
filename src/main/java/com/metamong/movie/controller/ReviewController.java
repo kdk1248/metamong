@@ -1,51 +1,57 @@
 package com.metamong.movie.controller;
 
-import org.springframework.stereotype.Controller;
+import com.metamong.movie.dto.ReviewRequestDto;
+import com.metamong.movie.dto.ReviewResponseDto;
+import com.metamong.movie.service.ReviewService;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/api/review")
+import java.util.List;
+
+@RestController
+@RequestMapping("/api")
 public class ReviewController {
-
-    @PostMapping("/add")
-    @ResponseBody
-    public String addReview() {
-        return "댓글이 추가됨";
+    private final ReviewService reviewService;
+    public ReviewController(ReviewService reviewService) {
+        this.reviewService = reviewService;
     }
 
-    @PutMapping("/update/{id}")
-    @ResponseBody
-    public String updateReview() {
-        return "특정 댓글이 수정됨";
+    /**
+     * CREATE
+     * @param reviewRequestDto
+     * @return
+     */
+    @PostMapping("/reviews")
+    public ReviewResponseDto createReview(@RequestBody ReviewRequestDto reviewRequestDto){
+        return reviewService.createReview(reviewRequestDto);
     }
 
-    @DeleteMapping("/remove/{id}")
-    @ResponseBody
-    public String deleteReview() {
-        return "특정 댓글이 삭제됨";
+    /**
+     * READ
+     * @return List<MemoResponseDto>
+     */
+    @GetMapping("/reviews")
+    public List<ReviewResponseDto> getReviews(){
+        return reviewService.getReviews();
     }
 
-    @GetMapping("/show")
-    @ResponseBody
-    public String showReviews() {
-        return "전체 댓글 조회";
+    /**
+     * UPDATE
+     * @param id
+     * @param reviewRequestDto
+     * @return
+     */
+    @PutMapping("/reviews/{id}")
+    public Long updateMemo(@PathVariable Long id, @RequestBody ReviewRequestDto reviewRequestDto){
+        return reviewService.updateReview(id, reviewRequestDto);
     }
 
-    @GetMapping("/show/{id}")
-    @ResponseBody
-    public String showReviewById() {
-        return "특정 댓글 조회";
-    }
-
-    @PutMapping("/{id}/like")
-    @ResponseBody
-    public String likeReview() {
-        return "특정 댓글에 좋아요";
-    }
-
-    @PutMapping("/{id}/dislike")
-    @ResponseBody
-    public String dislikeReview() {
-        return "특정 댓글에 싫어요";
+    /**
+     * DELETE
+     * @param id
+     * @return id
+     */
+    @DeleteMapping("/reviews/{id}")
+    public Long deleteReview(@PathVariable Long id){
+        return reviewService.deleteReview(id);
     }
 }
