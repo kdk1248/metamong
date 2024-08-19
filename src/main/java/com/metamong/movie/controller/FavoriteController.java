@@ -1,28 +1,57 @@
 package com.metamong.movie.controller;
 
+import com.metamong.movie.dto.FavoriteRequestDto;
+import com.metamong.movie.dto.FavoriteResponseDto;
+import com.metamong.movie.service.FavoriteService;
+import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/favourite")
+@RequestMapping("/api")
+@AllArgsConstructor
 public class FavoriteController {
-    @PostMapping("/add")
-    public String addFavourite() {
-        return "관심 영화가 추가됨";
+    //관심 영화 변수 선언
+    private final FavoriteService favoriteService;
+
+    /**
+     * CREATE
+     * @param favoriteRequestDto
+     * @return
+     */
+    @PostMapping("/favorites")
+    public FavoriteResponseDto createFavorite(@RequestBody FavoriteRequestDto favoriteRequestDto){
+        return favoriteService.createFavorite(favoriteRequestDto);
     }
 
-    @DeleteMapping("/remove/{id}")
-    public String removeFavourite() {
-        return "관심 영화가 삭제됨";
+    /**
+     * DELETE
+     * @param id
+     * @return
+     */
+    @DeleteMapping("/favorites/{id}")
+    public Long deleteFavourite(@PathVariable Long id) {
+        return favoriteService.deleteFavorite(id);
     }
 
-    @GetMapping("/show")
-    public String showFavourites() {
-        return "전체 관심 영화 조회";
+    /**
+     * READ
+     * @return List<FavoriteResponseDto>
+     */
+    @GetMapping("/favorites")
+    public List<FavoriteResponseDto> getFavourites() {
+        return favoriteService.getFavourites();
     }
 
-    @GetMapping("/show/{id}")
-    public String showFavouriteById() {
-        return "특정 관심 영화 조회";
+    /**
+     * READ
+     * @param id
+     * @return
+     */
+    @PutMapping("/favorites/{id}")
+    public Long updateFavorite(@PathVariable Long id, @RequestBody FavoriteRequestDto favoriteRequestDto) {
+        return favoriteService.updateFavorite(id, favoriteRequestDto);
     }
 }
 
