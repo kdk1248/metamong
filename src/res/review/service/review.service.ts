@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Review } from '../entity/review.entity';
+import { ReviewEntity } from '../entity/review.entity';
 import { ReviewRepository } from '../repository/review.repository';
 import { ReviewRequestDto } from '../dto/review-request.dto';
 import { ReviewResponseDto } from '../dto/review-response.dto';
@@ -8,14 +8,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class ReviewService {
   constructor(
-    @InjectRepository(Review) //Review Entity
+    @InjectRepository(ReviewEntity) //Review Entity
     private readonly reviewRepository: ReviewRepository
   ) {}
 
   async createReview(reviewRequestDto: ReviewRequestDto): Promise<ReviewResponseDto> {
-    const review = new Review();
-    review.username = reviewRequestDto.username;
-    review.contents = reviewRequestDto.contents;
+    const review = new ReviewEntity();
+    // review.username = reviewRequestDto.username;
+    review.content = reviewRequestDto.content;
     const savedReview = await this.reviewRepository.save(review);
     return new ReviewResponseDto(savedReview.id, savedReview.username, savedReview.contents);
   }
