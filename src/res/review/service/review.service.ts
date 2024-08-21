@@ -17,7 +17,7 @@ export class ReviewService {
     // review.username = reviewRequestDto.username;
     review.content = reviewRequestDto.content;
     const savedReview = await this.reviewRepository.save(review);
-    return new ReviewResponseDto(savedReview.id, savedReview.username, savedReview.contents);
+    return new ReviewResponseDto(ReviewEntity.id, 'dummy', ReviewEntity.content);
   }
 
   async getReviews(): Promise<ReviewResponseDto[]> {
