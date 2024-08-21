@@ -8,7 +8,7 @@ import{
 
 export class CommonBigPKEntity{
     @PrimaryGeneratedColumn({type:'bigint'}) // 기본키를 만드는 칼럼
-    id:string; //꾸밈 당함 auto increment가 적용된 pk인 id라는 칼럼
+    id:number; //꾸밈 당함 auto increment가 적용된 pk인 id라는 칼럼
 
     @CreateDateColumn({type: 'timestamp'}) // 생성일자 적용 칼럼
     createdAt: Date; // create 되었을 때 자동으로 생성일자 넣음
