@@ -32,6 +32,9 @@ import { ReviewRequestDto } from '../dto/review-request.dto';
 export class ReviewEntity extends CommonBigPKEntity{
   @Column('text', {unique: false, nullable: false})
   content:string;
+  static id: number;
+  static username: string;
+  static content: string;
 
   // @ManyToOne(()=> UserEntity, (user)=> user.comments)
   // @JoinColumn({name: 'userId', referencedColumnName:'id'})
