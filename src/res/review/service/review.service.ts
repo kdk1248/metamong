@@ -3,10 +3,14 @@ import { Review } from '../entity/review.entity';
 import { ReviewRepository } from '../repository/review.repository';
 import { ReviewRequestDto } from '../dto/review-request.dto';
 import { ReviewResponseDto } from '../dto/review-response.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ReviewService {
-  constructor(private readonly reviewRepository: ReviewRepository) {}
+  constructor(
+    @InjectRepository(Review) //Review Entity
+    private readonly reviewRepository: ReviewRepository
+  ) {}
 
   async createReview(reviewRequestDto: ReviewRequestDto): Promise<ReviewResponseDto> {
     const review = new Review();

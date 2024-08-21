@@ -1,5 +1,5 @@
 export class ReviewRequestDto {
     username: string;
-    contents: string;
+    content: string;
   }
   

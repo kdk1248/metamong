@@ -1,4 +1,3 @@
-import { Review } from '../entity/review.entity';
 
 export class ReviewResponseDto {
     constructor(
