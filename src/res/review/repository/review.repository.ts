@@ -1,18 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Review } from '../entity/review.entity';
+import { ReviewEntity } from '../entity/review.entity';
 import { ReviewRequestDto } from '../dto/review-request.dto';
 import { ReviewResponseDto } from '../dto/review-response.dto';
 
 @Injectable()
 export class ReviewRepository {
   constructor(
-    @InjectRepository(Review)
-    private readonly reviewRepository: Repository<Review>,
+    @InjectRepository(ReviewEntity)
+    private readonly reviewRepository: Repository<ReviewEntity>,
   ) {}
 
-  async save(review: Review): Promise<Review> {
+  async save(review: ReviewEntity): Promise<ReviewEntity> {
     try {
       return await this.reviewRepository.save(review);
     } catch (error) {
@@ -23,7 +23,8 @@ export class ReviewRepository {
   async getReviews(): Promise<ReviewResponseDto[]> {
     try {
       const reviews = await this.reviewRepository.find();
-      return reviews.map((review) => new ReviewResponseDto(review.id, review.username, review.contents));
+      return reviews.map((review) => new ReviewResponseDto(review.id,'dummy', review.content));
+
     } catch (error) {
       throw new Error('Failed to retrieve reviews');
     }
@@ -37,8 +38,8 @@ export class ReviewRepository {
 
     try {
       await this.reviewRepository.update(id, {
-        username: reviewRequestDto.username,
-        contents: reviewRequestDto.contents,
+        // username: reviewRequestDto.username,
+        content: reviewRequestDto.content,
       });
     } catch (error) {
       throw new Error(`Failed to update the review with ID ${id}`);
@@ -58,7 +59,7 @@ export class ReviewRepository {
     }
   }
 
-  async findById(id: number): Promise<Review | null> {
+  async findById(id: number): Promise<ReviewEntity | null> {
     try {
       const review = await this.reviewRepository.findOne({ where: { id } });
       if (!review) {
