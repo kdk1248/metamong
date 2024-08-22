@@ -1,8 +1,9 @@
 import { Entity, Column, PrimaryGeneratedColumn, BaseEntity } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
+import { CommonBigPKEntity } from 'src/res/review/entity/common/common.entity';
 
 @Entity('movie')
-export class MovieEntity extends BaseEntity {
+export class MovieEntity extends CommonBigPKEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -38,8 +39,8 @@ export class MovieEntity extends BaseEntity {
 
     constructor(movieRequestDto: MovieRequestDto) {
         super();
-        if(movieRequestDto) {
-                  this.title = movieRequestDto.title;
+        if (movieRequestDto) {
+            this.title = movieRequestDto.title;
             this.directorId = movieRequestDto.directorId;
             this.genre = movieRequestDto.genre;
             this.contents = movieRequestDto.contents;
