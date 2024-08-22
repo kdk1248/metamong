@@ -35,6 +35,8 @@ export class ReviewEntity extends CommonBigPKEntity{
   static id: number;
   static username: string;
   static content: string;
+  replies: any;
+  reply: any;
 
   // @ManyToOne(()=> UserEntity, (user)=> user.comments)
   // @JoinColumn({name: 'userId', referencedColumnName:'id'})
