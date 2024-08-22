@@ -6,6 +6,12 @@ import { AppService } from './app.service';
 import { ReviewModule } from './res/review/review.module';
 import { ReviewEntity } from './res/review/entity/review.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { FavoriteEntity } from './res/favorite/entity/favorite.entity';
+import { ReviewReplyEntity } from './res/reviewreply/entity/reviewreply.entity';
+import { MovieEntity } from './res/movie/entity/movie.entity';
+import { FavoriteModule } from './res/favorite/favorite.module';
+import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
+import { MovieModule } from './res/movie/movie.module';
 
 //UserModule을 생성했기 때문에 AppModule에 등록을 해야 동작하게끔 만듦
 @Module({
@@ -16,7 +22,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        retryAttempts: configService.get('NODE_ENV') === 'prod' ? 10 : 1,
+        // retryAttempts: configService.get('NODE_ENV') === 'prod' ? 10 : 1,
         type: 'mysql',
         host: configService.get('DB_HOST'),
         port: Number(configService.get('DB_PORT')),
@@ -24,15 +30,18 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
         entities: [
-          path.join(__dirname, 'src/entities/**/*.entity.{js, ts}'),
+          FavoriteEntity, ReviewEntity, ReviewReplyEntity,MovieEntity
         ],
-        synchronize: false,
+        synchronize: true,
         logging: true,
         timezone: 'local',
       }),
     }),
-    TypeOrmModule.forFeature([ReviewEntity]), // 특정 엔티티에 대한 레포지토리 등록
-    ReviewModule
+    // TypeOrmModule.forFeature([ReviewEntity]), // 특정 엔티티에 대한 레포지토리 등록
+    ReviewModule,
+    FavoriteModule,
+    ReviewReplyModule,
+    MovieModule
   ],
   controllers: [AppController],
   providers: [AppService],
