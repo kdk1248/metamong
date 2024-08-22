@@ -22,16 +22,15 @@
 //     this.contents = reviewRequestDto.contents;
 //   }
 // }
-import{ Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { CommonBigPKEntity } from './common/common.entity';
 // import { UserEntity } from './user.entity';
 import { ReviewRequestDto } from '../dto/review-request.dto';
 
-
-@Entity('Review')
-export class ReviewEntity extends CommonBigPKEntity{
-  @Column('text', {unique: false, nullable: false})
-  content:string;
+@Entity()
+export class Review extends CommonBigPKEntity {
+  @Column('text', { unique: false, nullable: false })
+  content: string;
   static id: number;
   static username: string;
   static content: string;
@@ -54,5 +53,4 @@ export class ReviewEntity extends CommonBigPKEntity{
     this.content = reviewRequestDto.content;
     // this.user = reviewRequestDto.username;
   }
-
 }

@@ -1,4 +1,4 @@
-import { MovieEntity } from '../entity/movie.entity';
+import { Movie } from '../entity/movie.entity';
 
 export class MovieResponseDto {
   id: number;
@@ -13,7 +13,7 @@ export class MovieResponseDto {
   createdAt: Date;
   modifiedAt: Date;
 
-  constructor(movie: MovieEntity) {
+  constructor(movie: Movie) {
     this.id = movie.id;
     this.title = movie.title;
     this.directorId = movie.directorId;

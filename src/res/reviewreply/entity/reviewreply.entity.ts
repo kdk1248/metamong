@@ -1,4 +1,4 @@
-import { ReviewEntity } from 'src/res/review/entity/review.entity';
+import { Review } from 'src/res/review/entity/review.entity';
 import {
   Column,
   Entity,
@@ -10,8 +10,8 @@ import { ReviewReplyRequestDto } from '../dto/reviewreply-request.dto';
 import { CommonBigPKEntity } from './common/common.entity';
 // import { UserEntity } from './entity/user.entity';
 
-@Entity('review_replies')
-export class ReviewReplyEntity extends CommonBigPKEntity {
+@Entity()
+export class ReviewReply extends CommonBigPKEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,11 +22,11 @@ export class ReviewReplyEntity extends CommonBigPKEntity {
   // @JoinColumn({ name: 'userId' })
   // user: UserEntity;
 
-  @ManyToOne(() => ReviewEntity, (review) => review.replies, {
+  @ManyToOne(() => Review, (review) => review.replies, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'reviewId' })
-  review: ReviewEntity;
+  review: Review;
 
   constructor(reviewreplyRequestDto?: ReviewReplyRequestDto) {
     super();

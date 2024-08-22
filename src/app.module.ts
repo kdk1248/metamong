@@ -1,17 +1,16 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import * as path from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ReviewModule } from './res/review/review.module';
-import { ReviewEntity } from './res/review/entity/review.entity';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { FavoriteEntity } from './res/favorite/entity/favorite.entity';
-import { ReviewReplyEntity } from './res/reviewreply/entity/reviewreply.entity';
-import { MovieEntity } from './res/movie/entity/movie.entity';
+import { Favorite } from './res/favorite/entity/favorite.entity';
 import { FavoriteModule } from './res/favorite/favorite.module';
-import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
+import { Movie } from './res/movie/entity/movie.entity';
 import { MovieModule } from './res/movie/movie.module';
+import { Review } from './res/review/entity/review.entity';
+import { ReviewModule } from './res/review/review.module';
+import { ReviewReply } from './res/reviewreply/entity/reviewreply.entity';
+import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
 
 //UserModule을 생성했기 때문에 AppModule에 등록을 해야 동작하게끔 만듦
 @Module({
@@ -29,9 +28,7 @@ import { MovieModule } from './res/movie/movie.module';
         database: configService.get('DB_NAME'),
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
-        entities: [
-          FavoriteEntity, ReviewEntity, ReviewReplyEntity,MovieEntity
-        ],
+        entities: [Favorite, Review, ReviewReply, Movie],
         synchronize: true,
         logging: true,
         timezone: 'local',
@@ -41,7 +38,7 @@ import { MovieModule } from './res/movie/movie.module';
     ReviewModule,
     FavoriteModule,
     ReviewReplyModule,
-    MovieModule
+    MovieModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,19 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ReviewReplyRepository } from '../repository/reviewreply.repository';
+import { InjectRepository } from '@nestjs/typeorm';
 import { ReviewReplyRequestDto } from '../dto/reviewreply-request.dto';
 import { ReviewReplyResponseDto } from '../dto/reviewreply-response.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ReviewReplyEntity } from '../entity/reviewreply.entity';
+import { ReviewReply } from '../entity/reviewreply.entity';
+import { ReviewReplyRepository } from '../repository/reviewreply.repository';
 
 @Injectable()
 export class ReviewReplyService {
   constructor(
-    @InjectRepository(ReviewReplyEntity)
+    @InjectRepository(ReviewReply)
     private readonly reviewReplyRepository: ReviewReplyRepository,
   ) {}
 
-  async addReviewReply(reviewReplyRequestDto: ReviewReplyRequestDto): Promise<ReviewReplyResponseDto> {
-    const reviewReply = await this.reviewReplyRepository.addReviewReply(reviewReplyRequestDto);
+  async addReviewReply(
+    reviewReplyRequestDto: ReviewReplyRequestDto,
+  ): Promise<ReviewReplyResponseDto> {
+    const reviewReply = await this.reviewReplyRepository.addReviewReply(
+      reviewReplyRequestDto,
+    );
     return new ReviewReplyResponseDto(
       reviewReply.id,
       reviewReply.user.id,
@@ -39,14 +43,20 @@ export class ReviewReplyService {
     );
   }
 
-  async getReviewRepliesByReviewId(reviewId: number): Promise<ReviewReplyResponseDto[]> {
-    const reviewReplies = await this.reviewReplyRepository.findByReviewId(reviewId);
-    return reviewReplies.map(reply => new ReviewReplyResponseDto(
-      reply.id,
-      reply.user.id,
-      reply.review.id,
-      reply.content,
-      reply.createdAt,
-    ));
+  async getReviewRepliesByReviewId(
+    reviewId: number,
+  ): Promise<ReviewReplyResponseDto[]> {
+    const reviewReplies =
+      await this.reviewReplyRepository.findByReviewId(reviewId);
+    return reviewReplies.map(
+      (reply) =>
+        new ReviewReplyResponseDto(
+          reply.id,
+          reply.user.id,
+          reply.review.id,
+          reply.content,
+          reply.createdAt,
+        ),
+    );
   }
 }

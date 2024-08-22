@@ -1,12 +1,12 @@
+import { Movie } from 'src/res/movie/entity/movie.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { CommonBigPKEntity } from './common/common.entity';
 import { FavoriteRequestDto } from '../dto/favorite-request.dto';
-import { MovieEntity } from 'src/res/movie/entity/movie.entity';
+import { CommonBigPKEntity } from './common/common.entity';
 // import { UserEntity } from './user.entity';
 // import { MovieEntity } from './movie.entity';
 
-@Entity('Favorite')
-export class FavoriteEntity extends CommonBigPKEntity {
+@Entity()
+export class Favorite extends CommonBigPKEntity {
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   addedAt: Date;
 
@@ -14,24 +14,24 @@ export class FavoriteEntity extends CommonBigPKEntity {
   // @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
   // user: UserEntity;
 
-  @ManyToOne(() => MovieEntity, (movie) => movie.favorite)
+  @ManyToOne(() => Movie, (movie) => movie.favorite)
   @JoinColumn({ name: 'movieId', referencedColumnName: 'id' })
-  movie: MovieEntity;
+  movie: Movie;
 
-//   user: any;
+  //   user: any;
 
   constructor(favoriteRequestDto?: FavoriteRequestDto) {
     super();
     if (favoriteRequestDto) {
       // this.user = { id: favoriteRequestDto.userId } as UserEntity;
-      this.movie = { id: favoriteRequestDto.movieId } as MovieEntity;
+      this.movie = { id: favoriteRequestDto.movieId } as Movie;
       this.addedAt = new Date();
     }
   }
 
   update(favoriteRequestDto: FavoriteRequestDto): void {
     // this.user = { id: favoriteRequestDto.userId } as UserEntity;
-    this.movie = { id: favoriteRequestDto.movieId } as MovieEntity;
+    this.movie = { id: favoriteRequestDto.movieId } as Movie;
     this.addedAt = new Date();
   }
 }
