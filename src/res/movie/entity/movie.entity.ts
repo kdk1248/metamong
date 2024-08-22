@@ -38,13 +38,15 @@ export class MovieEntity extends BaseEntity {
 
     constructor(movieRequestDto: MovieRequestDto) {
         super();
-        this.title = movieRequestDto.title;
-        this.directorId = movieRequestDto.directorId;
-        this.genre = movieRequestDto.genre;
-        this.contents = movieRequestDto.contents;
-        this.posterUrl = movieRequestDto.posterUrl;
-        this.favorite = movieRequestDto.favorite;
-        this.runningTime = movieRequestDto.runningTime;
+        if(movieRequestDto) {
+                  this.title = movieRequestDto.title;
+            this.directorId = movieRequestDto.directorId;
+            this.genre = movieRequestDto.genre;
+            this.contents = movieRequestDto.contents;
+            this.posterUrl = movieRequestDto.posterUrl;
+            this.favorite = movieRequestDto.favorite;
+            this.runningTime = movieRequestDto.runningTime;
+        }
     }
 
     update(movieRequestDto: MovieRequestDto) {
