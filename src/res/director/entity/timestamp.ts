@@ -1,6 +1,6 @@
-import { CreateDateColumn, UpdateDateColumn, Column } from 'typeorm';
+import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
-export abstract class Timestamped {
-  @CreateDateColumn({ type: 'timestamp' })
+export abstract class Timestamp {
+  @CreateDateColumn()
   createdAt: Date;
 }
