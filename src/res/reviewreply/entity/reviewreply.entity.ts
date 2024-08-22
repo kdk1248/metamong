@@ -1,9 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
-import { CommonBigPKEntity } from './common/common.entity';
 import { ReviewEntity } from 'src/res/review/entity/review.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ReviewReplyRequestDto } from '../dto/reviewreply-request.dto';
+import { CommonBigPKEntity } from './common/common.entity';
 // import { UserEntity } from './entity/user.entity';
-
 
 @Entity('review_replies')
 export class ReviewReplyEntity extends CommonBigPKEntity {
@@ -17,7 +22,9 @@ export class ReviewReplyEntity extends CommonBigPKEntity {
   // @JoinColumn({ name: 'userId' })
   // user: UserEntity;
 
-  @ManyToOne(() => ReviewEntity, (review) => review.replies, { onDelete: 'CASCADE' })
+  @ManyToOne(() => ReviewEntity, (review) => review.replies, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'reviewId' })
   review: ReviewEntity;
 
@@ -28,7 +35,5 @@ export class ReviewReplyEntity extends CommonBigPKEntity {
     }
   }
 
-  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-  createdAt: Date;
-    user: any;
+  user: any;
 }
