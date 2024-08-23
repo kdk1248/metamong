@@ -1,20 +1,28 @@
-// user.repository.ts
 import { Injectable } from '@nestjs/common';
 import { User } from '../entity/user.entity';
+import { SignupRequestDto } from '../dto/user-request.dto';
 
 @Injectable()
 export class UserRepository {
-    create(arg0: { name: string; email: string; phonenumber: any; password: any; }) {
-        throw new Error('Method not implemented.');
-    }
-    findOne(arg0: { where: { email: string; }; }) {
-        throw new Error('Method not implemented.');
-    }
     private users: User[] = [];
+
+    create(userData:SignupRequestDto): User {
+        const newUser = new User();
+        newUser.name = userData.name;
+        newUser.email = userData.email;
+        newUser.phonenumber = userData.phoneNumber;
+        newUser.password = userData.password;
+        newUser.id = this.users.length + 1; // 임시로 ID를 생성합니다.
+        return newUser;
+    }
 
     async save(user: User): Promise<User> {
         this.users.push(user);
         return user;
+    }
+
+    async findOne(condition: { where: { email: string } }): Promise<User | undefined> {
+        return this.users.find(user => user.email === condition.where.email);
     }
 
     async findOneByEmail(email: string): Promise<User | undefined> {

@@ -3,10 +3,9 @@ import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../entity/user.entity';
-import { SignupRequestDto } from '../dto/signup-request.dto';
-import { LoginRequestDto } from '../dto/login-request.dto';
-import { LoginResponseDto } from '../dto/login-response.dto';
 import { UserRepository } from '../repository/user.repository';
+import { LoginRequestDto, SignupRequestDto } from '../dto/user-request.dto';
+import { LoginResponseDto } from '../dto/user-response.dto';
 
 @Injectable()
 export class UserService {
@@ -15,12 +14,18 @@ export class UserService {
         private readonly userRepository: UserRepository,
         private readonly jwtService: JwtService,
     ) {}
+    async addUser(signupRequestDto: SignupRequestDto): Promise<User> {
+        const user = this.userRepository.create(signupRequestDto);
+        return await this.userRepository.save(user);
+    }
+
+    async findUserByEmail(email: string): Promise<User | undefined> {
+        return await this.userRepository.findOne({ where: { email } });
+    }
 
     async signup(signupRequestDto: SignupRequestDto): Promise<string> {
         // 이메일로 사용자 존재 여부 확인
-        const existingUser = await this.userRepository.findOne({
-            where: { email: signupRequestDto.email },
-        });
+        const existingUser = await this.findUserByEmail(signupRequestDto.email);
 
         // 이미 존재하는 이메일인 경우 예외 처리
         if (existingUser) {
@@ -38,28 +43,15 @@ export class UserService {
             );
         }
 
-        // 비밀번호 해시화
-        const hashedPassword = await bcrypt.hash(signupRequestDto.password, 10);
-
-        // 새 사용자 생성
-        const newUser = this.userRepository.create({
-            name: signupRequestDto.name,
-            email: signupRequestDto.email,
-            phonenumber: signupRequestDto.phoneNumber,
-            password: hashedPassword,
-        });
-
-        // 사용자 저장
-        await this.userRepository.save(newUser);
+        // 사용자 추가
+        await this.addUser(signupRequestDto);
 
         return 'Signup successful';
     }
 
     async login(loginRequestDto: LoginRequestDto): Promise<LoginResponseDto> {
         // 이메일로 사용자 조회
-        const user = await this.userRepository.findOne({
-            where: { email: loginRequestDto.email },
-        });
+        const user = await this.findUserByEmail(loginRequestDto.email);
 
         // 사용자가 없을 경우 예외 처리
         if (!user) {

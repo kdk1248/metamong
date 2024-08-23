@@ -1,23 +1,33 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { CommonBigPKEntity } from './common/common.entity';
-import { SignupRequestDto } from '../dto/signup-request.dto';
+import { SignupRequestDto } from '../dto/user-request.dto';
+import { ReviewReply } from 'src/res/reviewreply/entity/reviewreply.entity';
+import { Favorite } from 'src/res/favorite/entity/favorite.entity';
 
 @Entity()
 export class User extends CommonBigPKEntity {
-    @Column('text', { unique: true, nullable: false })
+    @Column('varchar', { unique: true, nullable: false })
     email: string;
 
-    @Column('text', { nullable: false })
+    @Column('varchar', { nullable: false })
     name: string;
 
-    @Column('text', { nullable: false })
+    @Column('varchar', { nullable: false })
     phonenumber: string;
 
-    @Column('text', { nullable: false })
+    @Column('varchar', { nullable: false })
     password: string;
-    comments: any;
-    favorite: any;
-    replies: any;
+    
+    @Column('text', { nullable: false })
+
+    @OneToMany(() => ReviewReply, (reviewreply) => reviewreply.user)
+    comments: ReviewReply[];
+
+    @OneToMany(() => Favorite, (favorite) => favorite.user)
+    favorite: Favorite[];
+
+    @OneToMany(() => ReviewReply, (reviewreply) => reviewreply.user)
+    replies: ReviewReply[];;
 
     constructor(signupRequestDto?: SignupRequestDto) {
         super();
