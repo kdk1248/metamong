@@ -39,7 +39,7 @@ export class ReviewRepository {
 
     try {
       await this.reviewRepository.update(id, {
-        // username: reviewRequestDto.username,
+        user: reviewRequestDto.username,
         content: reviewRequestDto.content,
       });
     } catch (error) {

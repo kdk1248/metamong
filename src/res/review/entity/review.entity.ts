@@ -1,31 +1,7 @@
-// import { Column, Entity, PrimaryColumn } from 'typeorm';
-// import { ReviewRequestDto } from '../dto/review-request.dto';
-
-// @Entity()
-// export class Review {
-//   @PrimaryColumn()
-//   id: number;
-//   @Column()
-//   username: string;
-//   @Column()
-//   contents: string;
-
-//   constructor(reviewRequestDto?: ReviewRequestDto) {
-//     if (reviewRequestDto) {
-//       this.username = reviewRequestDto.username;
-//       this.contents = reviewRequestDto.contents;
-//     }
-//   }
-
-//   update(reviewRequestDto: ReviewRequestDto): void {
-//     this.username = reviewRequestDto.username;
-//     this.contents = reviewRequestDto.contents;
-//   }
-// }
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { CommonBigPKEntity } from './common/common.entity';
-// import { UserEntity } from './user.entity';
 import { ReviewRequestDto } from '../dto/review-request.dto';
+import { User } from 'src/res/user/entity/user.entity';
 
 @Entity()
 export class Review extends CommonBigPKEntity {
@@ -37,20 +13,20 @@ export class Review extends CommonBigPKEntity {
   replies: any;
   reply: any;
 
-  // @ManyToOne(()=> UserEntity, (user)=> user.comments)
-  // @JoinColumn({name: 'userId', referencedColumnName:'id'})
-  // user: UserEntity;
+  @ManyToOne(()=> User, (user)=> user.comments)
+  @JoinColumn({name: 'userId', referencedColumnName:'id'})
+  user: User;
 
-  constructor(reviewRequestDto?: ReviewRequestDto) {
+  constructor(reviewRequestDto: ReviewRequestDto) {
     super();
     if (reviewRequestDto) {
       this.content = reviewRequestDto.content;
-      // this.user = reviewRequestDto.username;
+      this.user = reviewRequestDto.username;
     }
   }
 
   update(reviewRequestDto: ReviewRequestDto): void {
     this.content = reviewRequestDto.content;
-    // this.user = reviewRequestDto.username;
+    this.user = reviewRequestDto.username;
   }
 }

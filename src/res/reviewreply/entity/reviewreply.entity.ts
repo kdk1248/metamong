@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { ReviewReplyRequestDto } from '../dto/reviewreply-request.dto';
 import { CommonBigPKEntity } from './common/common.entity';
-// import { UserEntity } from './entity/user.entity';
+import { User } from 'src/res/user/entity/user.entity';
 
 @Entity()
 export class ReviewReply extends CommonBigPKEntity {
@@ -18,9 +18,9 @@ export class ReviewReply extends CommonBigPKEntity {
   @Column('text')
   content: string;
 
-  // @ManyToOne(() => UserEntity, (user) => user.replies, { onDelete: 'CASCADE' })
-  // @JoinColumn({ name: 'userId' })
-  // user: UserEntity;
+  @ManyToOne(() => User, (user) => user.replies, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'userId' })
+  user: User;
 
   @ManyToOne(() => Review, (review) => review.replies, {
     onDelete: 'CASCADE',
@@ -34,6 +34,4 @@ export class ReviewReply extends CommonBigPKEntity {
       this.content = reviewreplyRequestDto.content;
     }
   }
-
-  user: any;
 }

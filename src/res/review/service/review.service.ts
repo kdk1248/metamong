@@ -15,11 +15,11 @@ export class ReviewService {
   async createReview(
     reviewRequestDto: ReviewRequestDto,
   ): Promise<ReviewResponseDto> {
-    const review = new Review();
-    // review.username = reviewRequestDto.username;
+    const review = new Review(reviewRequestDto);
+    review.user = reviewRequestDto.username;
     review.content = reviewRequestDto.content;
     const savedReview = await this.reviewRepository.save(review);
-    return new ReviewResponseDto(Review.id, 'dummy', Review.content);
+    return new ReviewResponseDto(Review.id, Review.name, Review.content);
   }
 
   async getReviews(): Promise<ReviewResponseDto[]> {
