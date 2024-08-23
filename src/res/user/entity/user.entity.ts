@@ -27,7 +27,8 @@ export class User extends CommonBigPKEntity {
     favorite: Favorite[];
 
     @OneToMany(() => ReviewReply, (reviewreply) => reviewreply.user)
-    replies: ReviewReply[];;
+    replies: ReviewReply[];username: string;
+;
 
     constructor(signupRequestDto?: SignupRequestDto) {
         super();
