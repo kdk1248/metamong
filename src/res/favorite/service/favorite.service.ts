@@ -44,8 +44,7 @@ export class FavoriteService {
     return favorites.map(
       (favorite) =>
         new ShowFavoritesResponseDto(
-          // favorite.user.id,
-          -1,
+          favorite.user.id,
           favorite.movie.id,
           favorite.movie.title,
           favorite.addedAt,
@@ -61,8 +60,7 @@ export class FavoriteService {
     }
 
     return new ShowFavoriteByIdResponseDto(
-      // favorite.user.id,
-      -1,
+      favorite.user.id,
       favorite.movie.id,
       favorite.movie.title,
       favorite.addedAt,
