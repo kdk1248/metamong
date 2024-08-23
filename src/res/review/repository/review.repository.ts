@@ -22,9 +22,10 @@ export class ReviewRepository {
 
   async getReviews(): Promise<ReviewResponseDto[]> {
     try {
-      const reviews = await this.reviewRepository.find();
+      const reviews = await this.reviewRepository.find({ relations: ['user'] }); // 'user' relation 추가
       return reviews.map(
-        (review) => new ReviewResponseDto(review.id, 'dummy', review.content),
+        (review) =>
+          new ReviewResponseDto(review.id, review.user.username, review.content),
       );
     } catch (error) {
       throw new Error('Failed to retrieve reviews');
@@ -32,16 +33,14 @@ export class ReviewRepository {
   }
 
   async update(id: number, reviewRequestDto: ReviewRequestDto): Promise<void> {
-    const review = await this.reviewRepository.findOne({ where: { id } });
+    const review = await this.reviewRepository.findOne({ where: { id }, relations: ['user'] });
     if (!review) {
       throw new NotFoundException(`Review with ID ${id} not found`);
     }
 
     try {
-      await this.reviewRepository.update(id, {
-        user: reviewRequestDto.username,
-        content: reviewRequestDto.content,
-      });
+      review.update(reviewRequestDto);
+      await this.reviewRepository.save(review);
     } catch (error) {
       throw new Error(`Failed to update the review with ID ${id}`);
     }
@@ -62,7 +61,7 @@ export class ReviewRepository {
 
   async findById(id: number): Promise<Review | null> {
     try {
-      const review = await this.reviewRepository.findOne({ where: { id } });
+      const review = await this.reviewRepository.findOne({ where: { id }, relations: ['user'] });
       if (!review) {
         return null;
       }

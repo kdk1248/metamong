@@ -8,7 +8,6 @@ import { ReviewRepository } from '../repository/review.repository';
 @Injectable()
 export class ReviewService {
   constructor(
-    @InjectRepository(Review) //Review Entity
     private readonly reviewRepository: ReviewRepository,
   ) {}
 
@@ -16,10 +15,8 @@ export class ReviewService {
     reviewRequestDto: ReviewRequestDto,
   ): Promise<ReviewResponseDto> {
     const review = new Review(reviewRequestDto);
-    review.user = reviewRequestDto.username;
-    review.content = reviewRequestDto.content;
     const savedReview = await this.reviewRepository.save(review);
-    return new ReviewResponseDto(Review.id, Review.name, Review.content);
+    return new ReviewResponseDto(savedReview.id, savedReview.user.username, savedReview.content);
   }
 
   async getReviews(): Promise<ReviewResponseDto[]> {
