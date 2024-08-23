@@ -11,6 +11,8 @@ import { Review } from './res/review/entity/review.entity';
 import { ReviewModule } from './res/review/review.module';
 import { ReviewReply } from './res/reviewreply/entity/reviewreply.entity';
 import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
+import { User } from './res/user/entity/user.entity';
+import { UserModule } from './res/user/user.module';
 
 //UserModule을 생성했기 때문에 AppModule에 등록을 해야 동작하게끔 만듦
 @Module({
@@ -28,7 +30,7 @@ import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
         database: configService.get('DB_NAME'),
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
-        entities: [Favorite, Review, ReviewReply, Movie],
+        entities: [Favorite, Review, ReviewReply, Movie, User],
         synchronize: true,
         logging: true,
         timezone: 'local',
@@ -39,6 +41,7 @@ import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
     FavoriteModule,
     ReviewReplyModule,
     MovieModule,
+    UserModule
   ],
   controllers: [AppController],
   providers: [AppService],
