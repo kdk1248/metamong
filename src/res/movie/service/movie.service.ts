@@ -12,6 +12,7 @@ export class MovieService {
     private readonly movieRepository: Repository<Movie>,
   ) {}
 
+  // create
   async createMovie(
     movieRequestDto: MovieRequestDto,
   ): Promise<MovieResponseDto> {
@@ -20,6 +21,7 @@ export class MovieService {
     return new MovieResponseDto(savedMovie);
   }
 
+  // read
   async getMovies(): Promise<MovieResponseDto[]> {
     const movies = await this.movieRepository.find({
       order: {
@@ -29,6 +31,7 @@ export class MovieService {
     return movies.map((movie) => new MovieResponseDto(movie));
   }
 
+  // update
   async updateMovie(
     id: number,
     movieRequestDto: MovieRequestDto,
@@ -44,11 +47,20 @@ export class MovieService {
     return new MovieResponseDto(updatedMovie);
   }
 
+  // delete
   async deleteMovie(id: number): Promise<void> {
     const result = await this.movieRepository.delete(id);
 
     if (result.affected === 0) {
       throw new NotFoundException(`Movie with id ${id} not found`);
     }
+  }
+
+  //search
+  async searchMovies(title: string): Promise<Movie[]> {
+    return this.movieRepository
+      .createQueryBuilder('movie')
+      .where('movie.title LIKE :title', { title: `%${title}%` })
+      .getMany();
   }
 }

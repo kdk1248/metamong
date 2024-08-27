@@ -1,7 +1,8 @@
-import { Controller, Post, Get, Put, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Post, Get, Put, Delete, Body, Param, Query } from '@nestjs/common';
 import { MovieService } from '../service/movie.service';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { MovieResponseDto } from '../dto/movie-response.dto';
+import { Movie } from '../entity/movie.entity';
 
 @Controller('api/movies')
 export class MovieController {
@@ -25,5 +26,10 @@ export class MovieController {
   @Delete(':id')
   async deleteMovie(@Param('id') id: number): Promise<void> {
     await this.movieService.deleteMovie(id);
+  }
+
+  @Get('search')
+  async searchMovies(@Query('title') title: string): Promise<Movie[]> {
+    return this.movieService.searchMovies(title);
   }
 }
