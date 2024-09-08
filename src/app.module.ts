@@ -17,7 +17,6 @@ import { AuthModule } from './res/auth/auth.module';
 import { GlobalModule } from './global.module';
 import { typeOrmConfig } from './res/config/typeorm.config';
 
-//UserModule을 생성했기 때문에 AppModule에 등록을 해야 동작하게끔 만듦
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -26,7 +25,6 @@ import { typeOrmConfig } from './res/config/typeorm.config';
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
-        // retryAttempts: configService.get('NODE_ENV') === 'prod' ? 10 : 1,
         type: 'mysql',
         host: configService.get('DB_HOST'),
         port: Number(configService.get('DB_PORT')),
@@ -39,18 +37,16 @@ import { typeOrmConfig } from './res/config/typeorm.config';
         timezone: 'local',
       }),
     }),
-    // TypeOrmModule.forFeature([ReviewEntity]), // 특정 엔티티에 대한 레포지토리 등록
     GlobalModule,
-    TypeOrmModule.forRoot(typeOrmConfig),
     ReviewModule,
     FavoriteModule,
     ReviewReplyModule,
     MovieModule,
     UserModule,
     AuthModule,
-    
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+
