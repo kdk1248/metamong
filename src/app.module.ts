@@ -14,6 +14,8 @@ import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
 import { User } from './res/user/entity/user.entity';
 import { UserModule } from './res/user/user.module';
 import { AuthModule } from './res/auth/auth.module';
+import { GlobalModule } from './global.module';
+import { typeOrmConfig } from './res/config/typeorm.config';
 
 //UserModule을 생성했기 때문에 AppModule에 등록을 해야 동작하게끔 만듦
 @Module({
@@ -38,6 +40,8 @@ import { AuthModule } from './res/auth/auth.module';
       }),
     }),
     // TypeOrmModule.forFeature([ReviewEntity]), // 특정 엔티티에 대한 레포지토리 등록
+    GlobalModule,
+    TypeOrmModule.forRoot(typeOrmConfig),
     ReviewModule,
     FavoriteModule,
     ReviewReplyModule,
