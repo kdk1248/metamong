@@ -14,6 +14,12 @@ export class UserService {
         private readonly userRepository: UserRepository,
         private readonly jwtService: JwtService,
     ) {}
+    findOne(username: string) {
+        throw new Error('Method not implemented.');
+    }
+    create(arg0: { password: string; username: string; }) {
+        throw new Error('Method not implemented.');
+    }
     async addUser(signupRequestDto: SignupRequestDto): Promise<User> {
         const user = this.userRepository.create(signupRequestDto);
         return await this.userRepository.save(user);
@@ -22,6 +28,7 @@ export class UserService {
     async findUserByEmail(email: string): Promise<User | undefined> {
         return await this.userRepository.findOne({ where: { email } });
     }
+    
 
     async signup(signupRequestDto: SignupRequestDto): Promise<string> {
         // 이메일로 사용자 존재 여부 확인

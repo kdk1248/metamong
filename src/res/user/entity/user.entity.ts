@@ -1,8 +1,9 @@
 import { Column, Entity, OneToMany } from 'typeorm';
-import { CommonBigPKEntity } from './common/common.entity';
+import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { SignupRequestDto } from '../dto/user-request.dto';
 import { ReviewReply } from 'src/res/reviewreply/entity/reviewreply.entity';
 import { Favorite } from 'src/res/favorite/entity/favorite.entity';
+import { Review } from 'src/res/review/entity/review.entity';
 
 @Entity()
 export class User extends CommonBigPKEntity {
@@ -17,11 +18,12 @@ export class User extends CommonBigPKEntity {
 
     @Column('varchar', { nullable: false })
     password: string;
-    
-    @Column('text', { nullable: false })
 
-    @OneToMany(() => ReviewReply, (reviewreply) => reviewreply.user)
-    comments: ReviewReply[];
+    // @Column()
+    // role: UserRole;
+
+    @OneToMany(() => Review, (review) => review.user)
+    comments: Review[];
 
     @OneToMany(() => Favorite, (favorite) => favorite.user)
     favorite: Favorite[];
