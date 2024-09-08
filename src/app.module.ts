@@ -13,6 +13,7 @@ import { ReviewReply } from './res/reviewreply/entity/reviewreply.entity';
 import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
 import { User } from './res/user/entity/user.entity';
 import { UserModule } from './res/user/user.module';
+import { AuthModule } from './res/auth/auth.module';
 
 //UserModule을 생성했기 때문에 AppModule에 등록을 해야 동작하게끔 만듦
 @Module({
@@ -41,7 +42,9 @@ import { UserModule } from './res/user/user.module';
     FavoriteModule,
     ReviewReplyModule,
     MovieModule,
-    UserModule
+    UserModule,
+    AuthModule,
+    
   ],
   controllers: [AppController],
   providers: [AppService],
