@@ -25,5 +25,7 @@ export class User extends BaseEntity{
     @Column({ nullable: true })
     detailAddress: string;
     role: import("c:/metaverse/movie/src/res/user/enum/user-role.enum").UserRole;
+    name: string;
+    phonenumber: string;
 
 }
