@@ -18,8 +18,8 @@ export class UserResponseDto {
         this.username = user.username;
         this.email = user.email;
         this.role = user.role;
-        this.createdAt = user.createdAt;
-        this.updatedAt = user.updateAt;
+        // this.createdAt = user.createdAt;
+        // this.updatedAt = user.updateAt;
         this.postalCode = user.postalCode;
         this.address = user.address;
         this.detailAddress = user.detailAddress;
