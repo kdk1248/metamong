@@ -1,13 +1,7 @@
 import { Review } from 'src/res/review/entity/review.entity';
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import {Column,Entity,JoinColumn,ManyToOne,PrimaryGeneratedColumn,} from 'typeorm';
 import { ReviewReplyRequestDto } from '../dto/reviewreply-request.dto';
-import { CommonBigPKEntity } from './common/common.entity';
+import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { User } from 'src/res/user/entity/user.entity';
 
 @Entity()

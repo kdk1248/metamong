@@ -6,7 +6,6 @@ import { ReviewResponseDto } from '../dto/review-response.dto';
 @Controller('api')
 export class ReviewController {
   constructor(private readonly reviewService: ReviewService) {}
-
   /**
    * CREATE
    * @param reviewRequestDto

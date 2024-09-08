@@ -5,7 +5,7 @@ import { ReviewRequestDto } from '../dto/review-request.dto';
 import { ReviewResponseDto } from '../dto/review-response.dto';
 import { Review } from '../entity/review.entity';
 
-@Injectable()
+@Injectable() //의존성 주입 
 export class ReviewRepository {
   constructor(
     @InjectRepository(Review)
