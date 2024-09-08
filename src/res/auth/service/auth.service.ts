@@ -1,14 +1,15 @@
 import { ConflictException, Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import { v4 as uuidv4 } from 'uuid';
-import { User } from 'src/res/user/entity/user.entity';
-import { SignUpRequestDto } from '../dto/sign-up-request.dto';
 import { SignInRequestDto } from '../dto/sign-in-request.dto';
+import { SignUpRequestDto } from '../dto/sign-up-request.dto';
+import { User } from 'src/res/user/entity/user.entity';
 
 @Injectable()
 export class AuthService {
