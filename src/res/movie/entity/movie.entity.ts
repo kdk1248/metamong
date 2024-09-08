@@ -1,6 +1,6 @@
-import { CommonBigPKEntity } from 'src/res/review/entity/common/common.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
+import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 
 @Entity()
 export class Movie extends CommonBigPKEntity {

@@ -1,4 +1,4 @@
-import { CommonBigPKEntity } from 'src/res/review/entity/common/common.entity';
+import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { DirectorRequestDto } from '../dto/director-request.dto';
 

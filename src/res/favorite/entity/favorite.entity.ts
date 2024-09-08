@@ -1,7 +1,7 @@
 import { Movie } from 'src/res/movie/entity/movie.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { FavoriteRequestDto } from '../dto/favorite-request.dto';
-import { CommonBigPKEntity } from './common/common.entity';
+import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { User } from 'src/res/user/entity/user.entity';
 
 
