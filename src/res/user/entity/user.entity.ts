@@ -15,7 +15,7 @@ export class User extends CommonBigPKEntity {
     email: string;
 
     @Column('varchar', { nullable: false })
-    name: string;
+    username: string;
 
     @Column('varchar', { nullable: false })
     phonenumber: string;
@@ -29,6 +29,12 @@ export class User extends CommonBigPKEntity {
     @Column()
     postalCode: string;
 
+    @Column()
+    address: string;
+
+    @Column()
+    detailAddress: string;
+    
     @OneToMany(() => Review, (review) => review.user)
     comments: Review[];
 
@@ -36,15 +42,13 @@ export class User extends CommonBigPKEntity {
     favorite: Favorite[];
 
     @OneToMany(() => ReviewReply, (reviewreply) => reviewreply.user)
-    replies: ReviewReply[];username: string;
-    address: string;
-    detailAddress: string;
+    replies: ReviewReply[];
 ;
 
     constructor(signupRequestDto?: SignupRequestDto) {
         super();
         if (signupRequestDto) {
-            this.name = signupRequestDto.name;
+            this.username = signupRequestDto.name;
             this.email = signupRequestDto.email;
             this.phonenumber = signupRequestDto.phoneNumber;
             this.password = signupRequestDto.password;
@@ -52,7 +56,7 @@ export class User extends CommonBigPKEntity {
     }
 
     update(signupRequestDto: SignupRequestDto): void {
-        this.name = signupRequestDto.name;
+        this.username = signupRequestDto.name;
         this.email = signupRequestDto.email;
         this.phonenumber = signupRequestDto.phoneNumber;
         this.password = signupRequestDto.password;

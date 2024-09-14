@@ -24,7 +24,7 @@ export class AuthService {
 
     // 회원 가입
     async signUp(signUpRequestDto: SignUpRequestDto): Promise<User> {
-        const { username, password, email, role, postalCode, address, detailAddress } = signUpRequestDto;
+        const { username, password, email, role, postalCode, address, detailAddress, phonenumber } = signUpRequestDto;
         this.logger.verbose(`Attempting to sign up user with email: ${email}`);
 
         // 이메일 중복 확인
@@ -41,6 +41,7 @@ export class AuthService {
             postalCode,
             address,
             detailAddress,
+            phonenumber,
         });
 
         const savedUser = await this.usersRepository.save(newUser);
