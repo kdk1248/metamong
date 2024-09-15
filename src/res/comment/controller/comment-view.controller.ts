@@ -1,8 +1,8 @@
 import { Controller, Get, Render } from '@nestjs/common';
 
 @Controller()
-export class ReviewViewController {
-  @Get('myreview')
+export class CommentViewController {
+  @Get('mycomment')
   @Render('index')
   home() {
     return {};

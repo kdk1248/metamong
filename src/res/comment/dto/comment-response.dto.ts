@@ -1,5 +1,6 @@
 
-export class ReviewResponseDto {
+export class CommentResponseDto {
+    user: any;
     constructor(
         public id: number,
         public username: string,

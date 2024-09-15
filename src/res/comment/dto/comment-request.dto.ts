@@ -1,6 +1,6 @@
-export class ReviewRequestDto {
+export class CommentRequestDto {
   user: string;
   content: string;
-  movieId: any;
+  movieId: string;
   username: string;
 }
