@@ -16,6 +16,9 @@ export class SignUpRequestDto {
     password: string;
 
     @IsNotEmpty()
+    phonenumber: string;
+
+    @IsNotEmpty()
     @IsEmail() // 이메일 형식
     @MaxLength(100)
     email: string;
