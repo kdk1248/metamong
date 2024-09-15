@@ -20,7 +20,7 @@ import { typeOrmConfig } from './res/config/typeorm.config';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal: true,
+      isGlobal: true, //환경 변수를 전역으로 설정
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
