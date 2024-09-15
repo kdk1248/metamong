@@ -16,6 +16,23 @@ export class FavoriteService {
     private readonly favoriteRepository: FavoriteRepository, // FavoriteRepository 사용
   ) {}
 
+  // 관심 목록에 있는 영화들을 가져오는 메서드
+  async getUserFavoriteMovies(userId: string): Promise<any[]> {
+    // 사용자 ID로 관심 영화 목록을 가져옴
+    const favorites = await this.favoriteRepository.findAllByUser(parseInt(userId, 10));
+    
+    // 관심 영화 목록이 없는 경우 예외 처리
+    if (!favorites || favorites.length === 0) {
+      throw new NotFoundException(`No favorite movies found for user with ID ${userId}`);
+    }
+
+    // 사용자의 관심 영화 목록 반환 (영화의 제목과 장르를 포함)
+    return favorites.map(favorite => ({
+      title: favorite.movie.title,
+      genre: favorite.movie.genre, // genre 필드는 영화의 장르를 저장하는 곳이라고 가정
+    }));
+  }
+
   async addFavorite(
     favoriteRequestDto: FavoriteRequestDto,
   ): Promise<FavoriteResponseDto> {
