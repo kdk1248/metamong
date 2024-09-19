@@ -7,6 +7,7 @@ import { Movie } from '../entity/movie.entity';
 import { HttpService } from '@nestjs/axios';
 import { ConfigService } from '@nestjs/config';
 import { lastValueFrom, map } from 'rxjs'; // RxJS에서 lastValueFrom import 필요
+import { Genre } from 'src/res/genre/genre.enum';
 
 @Injectable()
 export class MovieService {
@@ -61,6 +62,13 @@ export class MovieService {
       throw new NotFoundException(`Movie with id ${id} not found`);
     }
     return new MovieResponseDto(movie);
+  }
+
+  async filterMoviesByGenre(genre: Genre): Promise<MovieResponseDto[]> {
+    const movies = await this.movieRepository.find({
+      where: { genre },
+    });
+    return movies.map(movie => new MovieResponseDto(movie));
   }
   
 

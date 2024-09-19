@@ -3,6 +3,7 @@ import { MovieService } from '../service/movie.service';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { MovieResponseDto } from '../dto/movie-response.dto';
 import { Movie } from '../entity/movie.entity';
+import { Genre } from 'src/res/genre/genre.enum';
 
 @Controller('api/movies')
 export class MovieController {
@@ -22,6 +23,11 @@ export class MovieController {
  async getMovieById(@Param('id') id: number): Promise<MovieResponseDto> {
   const movie = await this.movieService.getMovieById(id);
   return movie;
+  }
+
+  @Get('genre')
+  async filterByGenre(@Query('genre') genre: Genre): Promise<MovieResponseDto[]> {
+  return this.movieService.filterMoviesByGenre(genre);
   }
 
   @Put(':id')
