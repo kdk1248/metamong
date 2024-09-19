@@ -28,6 +28,22 @@ export class Movie extends CommonBigPKEntity {
   @Column({ type: 'int' })
   runningTime: number;
 
+  // KMDb
+  @Column({ type: 'varchar', length: 100 })
+  nation: string; 
+
+  @Column({ type: 'varchar', length: 255 })
+  company: string; 
+
+  @Column({ type: 'boolean' })
+  ratedYn: boolean; 
+
+  @Column({ type: 'varchar', length: 50 })
+  type: string; 
+
+  @Column({ type: 'varchar', length: 255 })
+  actor: string;
+
   @Column({ type: 'timestamp', nullable: true })
   releasedAt: Date;
 

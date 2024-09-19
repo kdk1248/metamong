@@ -9,6 +9,14 @@ export class MovieResponseDto {
   runningTime: number;
   posterUrl: string;
   favorite: number;
+
+  // KMDb
+  nation: string;
+  company: string;
+  ratedYn: boolean;
+  type: string;
+  actor: string;
+
   releasedAt: Date;
   createdAt: Date;
   modifiedAt: Date;
@@ -22,6 +30,11 @@ export class MovieResponseDto {
     this.runningTime = movie.runningTime;
     this.posterUrl = movie.posterUrl;
     this.favorite = movie.favorite;
+    this.nation = movie.nation;
+    this.company = movie.company;
+    this.ratedYn = movie.ratedYn;
+    this.type = movie.type;
+    this.actor = movie.actor;
     this.releasedAt = movie.releasedAt;
     this.createdAt = movie.createdAt;
     this.modifiedAt = movie.modifiedAt;
