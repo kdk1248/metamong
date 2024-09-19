@@ -7,15 +7,16 @@ import { Favorite } from './res/favorite/entity/favorite.entity';
 import { FavoriteModule } from './res/favorite/favorite.module';
 import { Movie } from './res/movie/entity/movie.entity';
 import { MovieModule } from './res/movie/movie.module';
-import { Review } from './res/review/entity/review.entity';
-import { ReviewModule } from './res/review/review.module';
-import { ReviewReply } from './res/reviewreply/entity/reviewreply.entity';
-import { ReviewReplyModule } from './res/reviewreply/reviewreply.module';
 import { User } from './res/user/entity/user.entity';
 import { UserModule } from './res/user/user.module';
 import { AuthModule } from './res/auth/auth.module';
 import { GlobalModule } from './global.module';
 import { typeOrmConfig } from './res/config/typeorm.config';
+import { CommentModule } from './res/comment/comment.module';
+import { Comment } from './res/comment/entity/comment.entity';
+import { CommentReply } from './res/commentreply/entity/commentreply.entity';
+import { CommentReplyModule } from './res/commentreply/commentreply.module';
+
 
 @Module({
   imports: [
@@ -31,16 +32,16 @@ import { typeOrmConfig } from './res/config/typeorm.config';
         database: configService.get('DB_NAME'),
         username: configService.get('DB_USER'),
         password: configService.get('DB_PASSWORD'),
-        entities: [Favorite, Review, ReviewReply, Movie, User],
+        entities: [Favorite, Comment, CommentReply, Movie, User],
         synchronize: true,
         logging: true,
         timezone: 'local',
       }),
     }),
     GlobalModule,
-    ReviewModule,
+    CommentModule,
     FavoriteModule,
-    ReviewReplyModule,
+    CommentReplyModule,
     MovieModule,
     UserModule,
     AuthModule,
