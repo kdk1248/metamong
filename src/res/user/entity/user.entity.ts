@@ -1,10 +1,10 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
-import { ReviewReply } from 'src/res/reviewreply/entity/reviewreply.entity';
 import { Favorite } from 'src/res/favorite/entity/favorite.entity';
-import { Review } from 'src/res/review/entity/review.entity';
+import { Comment } from 'src/res/comment/entity/comment.entity';
 import { UserRole } from '../enum/user-role.enum';
 import { SignupRequestDto } from '../dto/user-request.dto';
+import { CommentReply } from 'src/res/commentreply/entity/commentreply.entity';
 
 @Entity()
 export class User extends CommonBigPKEntity {
@@ -35,14 +35,14 @@ export class User extends CommonBigPKEntity {
     @Column()
     detailAddress: string;
     
-    @OneToMany(() => Review, (review) => review.user)
-    comments: Review[];
+    @OneToMany(() => Comment, (comment) => comment.user)
+    comments: Comment[];
 
     @OneToMany(() => Favorite, (favorite) => favorite.user)
     favorite: Favorite[];
 
-    @OneToMany(() => ReviewReply, (reviewreply) => reviewreply.user)
-    replies: ReviewReply[];
+    @OneToMany(() => CommentReply, (commentreply) => commentreply.user)
+    replies: CommentReply[];
 ;
 
     constructor(signupRequestDto?: SignupRequestDto) {
