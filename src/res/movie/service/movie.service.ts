@@ -55,6 +55,15 @@ export class MovieService {
     return movies.map((movie) => new MovieResponseDto(movie));
   }
 
+  async getMovieById(id: number): Promise<MovieResponseDto> {
+    const movie = await this.movieRepository.findOneBy({ id });
+    if (!movie) {
+      throw new NotFoundException(`Movie with id ${id} not found`);
+    }
+    return new MovieResponseDto(movie);
+  }
+  
+
   // 영화 업데이트
   async updateMovie(
     id: number,

@@ -17,6 +17,13 @@ export class MovieController {
   getMovies(): Promise<MovieResponseDto[]> {
     return this.movieService.getMovies();
   }
+
+  @Get(':id')
+ async getMovieById(@Param('id') id: number): Promise<MovieResponseDto> {
+  const movie = await this.movieService.getMovieById(id);
+  return movie;
+  }
+
   @Put(':id')
   async updateMovie(@Param('id') id: number, @Body() movieRequestDto: MovieRequestDto): Promise<MovieResponseDto> {
     return this.movieService.updateMovie(id, movieRequestDto);
