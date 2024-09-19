@@ -15,20 +15,20 @@ export class CommentReplyService {
   async addCommentReply(
     commentReplyRequestDto: CommentReplyRequestDto,
   ): Promise<CommentReplyResponseDto> {
-    const commentReply = await thiscommentwReplyRepository.addCommentReply(
+    const commentReply = await this.commentReplyRepository.addCommentReply(
       commentReplyRequestDto,
     );
     return new CommentReplyResponseDto(
       commentReply.id,
       commentReply.user.id,
-      commentReplycommentw.id,
+      commentReply.comment.id,
       commentReply.content,
       commentReply.createdAt,
     );
   }
 
   async removeCommentReply(id: number): Promise<CommentReplyResponseDto> {
-    const commentReply = await thiscommentwReplyRepository.findById(id);
+    const commentReply = await this.commentReplyRepository.findById(id);
     if (!commentReply) {
       throw new NotFoundException(`CommentReply with ID ${id} not found`);
     }
@@ -37,7 +37,7 @@ export class CommentReplyService {
     return new CommentReplyResponseDto(
       commentReply.id,
       commentReply.user.id,
-      commentReplycommentw.id,
+      commentReply.comment.id,
       commentReply.content,
       commentReply.createdAt,
     );
