@@ -1,7 +1,11 @@
+import { IsEnum } from "class-validator";
+import { Genre } from "src/res/genre/genre.enum";
+
 export class MovieRequestDto {
   directorId: number;
   title: string;
-  genre: string;
+  @IsEnum(Genre)
+  genre: Genre;
   contents: string;
   posterUrl: string;
   runningTime: number;

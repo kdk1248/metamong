@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
+import { Genre } from 'src/res/genre/genre.enum';
 
 @Entity()
 export class Movie extends CommonBigPKEntity {
@@ -13,8 +14,11 @@ export class Movie extends CommonBigPKEntity {
   @Column({ type: 'bigint' })
   directorId: number;
 
-  @Column({ type: 'varchar', length: 100 })
-  genre: string;
+  @Column({
+    type: 'enum',
+    enum: Genre,
+  })
+  genre: Genre;
 
   @Column({ type: 'text' })
   contents: string;
