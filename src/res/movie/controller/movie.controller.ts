@@ -30,6 +30,15 @@ export class MovieController {
   return this.movieService.filterMoviesByGenre(genre);
   }
 
+  @Get('paginated')
+  async getMoviesPaginated(
+  @Query('page') page: number = 1,
+  @Query('limit') limit: number = 15, // 영화 수 -> 회의
+  ): Promise<MovieResponseDto[]> {
+  return this.movieService.getMoviesPaginated(page, limit);
+  }
+
+
   @Put(':id')
   async updateMovie(@Param('id') id: number, @Body() movieRequestDto: MovieRequestDto): Promise<MovieResponseDto> {
     return this.movieService.updateMovie(id, movieRequestDto);

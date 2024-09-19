@@ -70,6 +70,17 @@ export class MovieService {
     });
     return movies.map(movie => new MovieResponseDto(movie));
   }
+
+  async getMoviesPaginated(page: number, limit: number): Promise<MovieResponseDto[]> {
+    const [movies, total] = await this.movieRepository.findAndCount({
+      skip: (page - 1) * limit,
+      take: limit,
+      order: { modifiedAt: 'DESC' }, // 내림차순 -> 회의
+    });
+  
+    return movies.map(movie => new MovieResponseDto(movie));
+  }
+  
   
 
   // 영화 업데이트
