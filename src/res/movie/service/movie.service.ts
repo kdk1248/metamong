@@ -1,13 +1,12 @@
+import { HttpService } from '@nestjs/axios';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
+import { lastValueFrom, map } from 'rxjs'; // RxJS에서 lastValueFrom import 필요
 import { Repository } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { MovieResponseDto } from '../dto/movie-response.dto';
 import { Movie } from '../entity/movie.entity';
-import { HttpService } from '@nestjs/axios';
-import { ConfigService } from '@nestjs/config';
-import { lastValueFrom, map } from 'rxjs'; // RxJS에서 lastValueFrom import 필요
-import { Genre } from 'src/res/genre/genre.enum';
 
 @Injectable()
 export class MovieService {
@@ -64,10 +63,8 @@ export class MovieService {
     return new MovieResponseDto(movie);
   }
 
-  async filterMoviesByGenre(genre: Genre): Promise<MovieResponseDto[]> {
-    const movies = await this.movieRepository.find({
-      where: { genre },
-    });
+  async filterMoviesByGenre(genre: string): Promise<MovieResponseDto[]> {
+    const movies = await this.getMoviesByGenre(genre);
     return movies.map(movie => new MovieResponseDto(movie));
   }
 

@@ -1,9 +1,8 @@
-import { Controller, Post, Get, Put, Delete, Body, Param, Query } from '@nestjs/common';
-import { MovieService } from '../service/movie.service';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { MovieResponseDto } from '../dto/movie-response.dto';
 import { Movie } from '../entity/movie.entity';
-import { Genre } from 'src/res/genre/genre.enum';
+import { MovieService } from '../service/movie.service';
 
 @Controller('api/movies')
 export class MovieController {
@@ -26,7 +25,7 @@ export class MovieController {
   }
 
   @Get('genre')
-  async filterByGenre(@Query('genre') genre: Genre): Promise<MovieResponseDto[]> {
+  async filterByGenre(@Query('genre') genre: string): Promise<MovieResponseDto[]> {
   return this.movieService.filterMoviesByGenre(genre);
   }
 
