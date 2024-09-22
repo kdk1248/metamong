@@ -1,5 +1,5 @@
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
 
 @Entity()
@@ -10,19 +10,19 @@ export class Collection extends CommonBigPKEntity {
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Column({ type: 'bigint' })
+  @Column({ type: 'bigint', default: 0 })
   like: number;
 
-  @Column({ type: 'varchar', length: 100 })
+  @Column({ type: 'bigint' })
   directorId: number;
 
-  @Column({ type: 'text' })
-  movieId: number;
+  @Column({ type: 'json' })
+  movieIds: number[];
 
-  @Column({ type: 'timestamp', nullable: true })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
-  @Column({ type: 'timestamp', nullable: true })
+  @UpdateDateColumn({ type: 'timestamp' })
   modifiedAt: Date;
 
   constructor(collectionRequestDto: CollectionRequestDto) {
@@ -30,14 +30,13 @@ export class Collection extends CommonBigPKEntity {
     if (collectionRequestDto) {
       this.name = collectionRequestDto.name;
       this.directorId = collectionRequestDto.directorId;
-      this.movieId = collectionRequestDto.movieId;
+      this.movieIds = collectionRequestDto.movieIds;
     }
   }
 
   update(collectionRequestDto: CollectionRequestDto) {
     this.name = collectionRequestDto.name;
-    this.like = collectionRequestDto.like;
     this.directorId = collectionRequestDto.directorId;
-    this.movieId = collectionRequestDto.movieId;
+    this.movieIds = collectionRequestDto.movieIds;
   }
 }

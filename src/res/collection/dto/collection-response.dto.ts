@@ -5,7 +5,7 @@ export class MovieResponseDto {
     name: string;
     like: number;
     directorId: number;
-    movieId: number;
+    movieIds: number[];
     createdAt: Date;
     modifiedAt: Date;
 
@@ -14,7 +14,7 @@ export class MovieResponseDto {
     this.name = collection.name;
     this.like = collection.like;
     this.directorId = collection.directorId;
-    this.movieId = collection.movieId;
+    this.movieIds = collection.movieIds;
     this.createdAt = collection.createdAt;
     this.modifiedAt = collection.modifiedAt;
   }
