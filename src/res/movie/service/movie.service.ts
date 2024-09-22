@@ -63,16 +63,33 @@ export class MovieService {
     return new MovieResponseDto(movie);
   }
 
-  async filterMoviesByGenre(genre: string): Promise<MovieResponseDto[]> {
-    const movies = await this.getMoviesByGenre(genre);
+  async filterMovies(filterOptions: { genre?: string, directorId?: number, actor?: string }): Promise<MovieResponseDto[]> {
+    const { genre, directorId, actor } = filterOptions;
+    
+    // 여러 검색조건 적용가능
+    const queryBuilder = this.movieRepository.createQueryBuilder('movie');
+  
+    if (genre) {
+      queryBuilder.andWhere('movie.genre = :genre', { genre });
+    }
+    if (directorId) {
+      queryBuilder.andWhere('movie.directorId = :directorId', { directorId });
+    }
+    if (actor) {
+      queryBuilder.andWhere('movie.actor LIKE :actor', { actor: `%${actor}%` });
+    }
+  
+    const movies = await queryBuilder.orderBy('movie.modifiedAt', 'DESC').getMany();
+  
     return movies.map(movie => new MovieResponseDto(movie));
   }
+  
 
   async getMoviesPaginated(page: number, limit: number): Promise<MovieResponseDto[]> {
     const [movies, total] = await this.movieRepository.findAndCount({
       skip: (page - 1) * limit,
       take: limit,
-      order: { modifiedAt: 'DESC' }, // 내림차순 -> 회의
+      order: { modifiedAt: 'DESC' },
     });
   
     return movies.map(movie => new MovieResponseDto(movie));

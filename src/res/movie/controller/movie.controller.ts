@@ -24,15 +24,19 @@ export class MovieController {
   return movie;
   }
 
-  @Get('genre')
-  async filterByGenre(@Query('genre') genre: string): Promise<MovieResponseDto[]> {
-  return this.movieService.filterMoviesByGenre(genre);
-  }
+  @Get('filter')
+async filterMovies(
+  @Query('genre') genre?: string,
+  @Query('directorId') directorId?: number,
+  @Query('actor') actor?: string,
+): Promise<MovieResponseDto[]> {
+  return this.movieService.filterMovies({ genre, directorId, actor });
+}
 
   @Get('paginated')
   async getMoviesPaginated(
   @Query('page') page: number = 1,
-  @Query('limit') limit: number = 15, // 영화 수 -> 회의
+  @Query('limit') limit: number = 15,
   ): Promise<MovieResponseDto[]> {
   return this.movieService.getMoviesPaginated(page, limit);
   }

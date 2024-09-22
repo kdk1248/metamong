@@ -29,13 +29,30 @@ export class MovieRepository {
     return await this.repository.findOne({ where: { id } });
   }
 
-  // 영화 필터링 (장르별)
-  async filterMoviesByGenre(genre: string): Promise<Movie[]> {
-    return await this.repository.find({
-      where: { genre },
-      order: { modifiedAt: 'DESC' },
-    });
-  }
+    // 영화 필터링
+    async filterMovies(
+      genre?: string,
+      directorId?: number,
+      actor?: string,
+    ): Promise<Movie[]> {
+      const queryBuilder = this.repository.createQueryBuilder('movie');
+  
+      if (genre) {
+        queryBuilder.andWhere('movie.genre = :genre', { genre });
+      }
+  
+      if (directorId) {
+        queryBuilder.andWhere('movie.directorId = :directorId', { directorId });
+      }
+  
+      if (actor) {
+        queryBuilder.andWhere('movie.actor LIKE :actor', { actor: `%${actor}%` });
+      }
+  
+      return await queryBuilder
+        .orderBy('movie.modifiedAt', 'DESC')
+        .getMany();
+    }
 
   // 페이징 처리된 영화 조회
   async findMoviesPaginated(page: number, limit: number): Promise<[Movie[], number]> {
