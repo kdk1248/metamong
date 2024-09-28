@@ -1,5 +1,5 @@
 export class MovieRequestDto {
-  directorId: number;
+  directorName: string;
   title: string;
   genre: string;
   contents: string;

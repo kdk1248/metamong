@@ -10,8 +10,8 @@ export class Movie extends CommonBigPKEntity {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
-  @Column({ type: 'bigint' })
-  directorId: number;
+  @Column({ type: 'varchar', length: 100 })
+  directorName: string;
 
   @Column({ type: 'varchar', length: 100 })
   genre: string;
@@ -57,7 +57,7 @@ export class Movie extends CommonBigPKEntity {
     super();
     if (movieRequestDto) {
       this.title = movieRequestDto.title;
-      this.directorId = movieRequestDto.directorId;
+      this.directorName = movieRequestDto.directorName;
       this.genre = movieRequestDto.genre;
       this.contents = movieRequestDto.contents;
       this.posterUrl = movieRequestDto.posterUrl;
@@ -68,7 +68,7 @@ export class Movie extends CommonBigPKEntity {
 
   update(movieRequestDto: MovieRequestDto) {
     this.title = movieRequestDto.title;
-    this.directorId = movieRequestDto.directorId;
+    this.directorName = movieRequestDto.directorName;
     this.genre = movieRequestDto.genre;
     this.contents = movieRequestDto.contents;
     this.posterUrl = movieRequestDto.posterUrl;
