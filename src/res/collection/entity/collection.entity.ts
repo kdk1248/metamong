@@ -13,9 +13,6 @@ export class Collection extends CommonBigPKEntity {
   @Column({ type: 'bigint', default: 0 })
   like: number;
 
-  @Column({ type: 'bigint' })
-  directorId: number;
-
   @Column({ type: 'json' })
   movieIds: number[];
 
@@ -29,14 +26,12 @@ export class Collection extends CommonBigPKEntity {
     super();
     if (collectionRequestDto) {
       this.name = collectionRequestDto.name;
-      this.directorId = collectionRequestDto.directorId;
       this.movieIds = collectionRequestDto.movieIds;
     }
   }
 
   update(collectionRequestDto: CollectionRequestDto) {
     this.name = collectionRequestDto.name;
-    this.directorId = collectionRequestDto.directorId;
     this.movieIds = collectionRequestDto.movieIds;
   }
 }

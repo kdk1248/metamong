@@ -7,12 +7,14 @@ import { CollectionService } from '../service/collection.service';
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
 
+  // CREATE
   @Post()
   async createCollection(@Body() collectionRequestDto: CollectionRequestDto): Promise<MovieResponseDto> {
     const createdCollection = await this.collectionService.createCollection(collectionRequestDto);
     return new MovieResponseDto(createdCollection);
   }
   
+  // READ
   @Get()
   async getCollections(): Promise<MovieResponseDto[]> {
     const collections = await this.collectionService.getCollections();
@@ -25,6 +27,7 @@ export class CollectionController {
     return new MovieResponseDto(collection);
   }
 
+  // UPDATE
   @Put(':id')
   async updateCollection(
     @Param('id') id: number,
@@ -33,7 +36,7 @@ export class CollectionController {
     const updatedCollection = await this.collectionService.updateCollection(id, collectionRequestDto);
     return new MovieResponseDto(updatedCollection);
   }
-
+  // DELETE
   @Delete(':id')
   async deleteCollection(@Param('id') id: number): Promise<void> {
     await this.collectionService.deleteCollection(id);
