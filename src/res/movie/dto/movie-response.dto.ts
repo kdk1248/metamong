@@ -3,11 +3,12 @@ import { Movie } from '../entity/movie.entity';
 export class MovieResponseDto {
   id: number;
   title: string;
-  directorId: number;
+  directorName: string;
   genre: string;
   contents: string;
   runningTime: number;
   posterUrl: string;
+  stillUrl: string;
   favorite: number;
 
   // KMDb
@@ -24,11 +25,12 @@ export class MovieResponseDto {
   constructor(movie: Movie) {
     this.id = movie.id;
     this.title = movie.title;
-    this.directorId = movie.directorId;
+    this.directorName = movie.directorName;
     this.genre = movie.genre;
     this.contents = movie.contents;
     this.runningTime = movie.runningTime;
     this.posterUrl = movie.posterUrl;
+    this.stillUrl = movie.stillUrl;
     this.favorite = movie.favorite;
     this.nation = movie.nation;
     this.company = movie.company;
