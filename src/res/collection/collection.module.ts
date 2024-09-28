@@ -1,0 +1,18 @@
+// collection.module.ts
+import { Module, forwardRef } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { CollectionService } from './service/collection.service';
+import { CollectionController } from './controller/collection.controller';
+import { Collection } from './entity/collection.entity';
+import { MovieModule } from '../movie/movie.module'; 
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([Collection]),
+    forwardRef(() => MovieModule),
+  ],
+  providers: [CollectionService],
+  controllers: [CollectionController],
+  exports: [CollectionService],
+})
+export class CollectionModule {}
