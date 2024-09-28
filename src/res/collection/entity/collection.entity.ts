@@ -1,5 +1,6 @@
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
-import { Column, Entity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Movie } from 'src/res/movie/entity/movie.entity';
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
 
 @Entity()
@@ -13,9 +14,10 @@ export class Collection extends CommonBigPKEntity {
   @Column({ type: 'bigint', default: 0 })
   like: number;
 
-  @Column({ type: 'json' })
-  movieIds: number[];
-
+  @ManyToMany(() => Movie, (movie) => movie.collections)
+  @JoinTable()
+  movies: Movie[];
+  
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
@@ -26,12 +28,10 @@ export class Collection extends CommonBigPKEntity {
     super();
     if (collectionRequestDto) {
       this.name = collectionRequestDto.name;
-      this.movieIds = collectionRequestDto.movieIds;
     }
   }
 
   update(collectionRequestDto: CollectionRequestDto) {
     this.name = collectionRequestDto.name;
-    this.movieIds = collectionRequestDto.movieIds;
   }
 }

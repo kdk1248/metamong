@@ -1,7 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
-import { MovieResponseDto } from '../dto/collection-response.dto';
+import { CollectionResponseDto } from '../dto/collection-response.dto'; // 수정된 부분
 import { CollectionService } from '../service/collection.service';
+import { Collection } from '../entity/collection.entity';
 
 @Controller('api/collections')
 export class CollectionController {
@@ -9,34 +10,34 @@ export class CollectionController {
 
   // CREATE
   @Post()
-  async createCollection(@Body() collectionRequestDto: CollectionRequestDto): Promise<MovieResponseDto> {
-    const createdCollection = await this.collectionService.createCollection(collectionRequestDto);
-    return new MovieResponseDto(createdCollection);
+  async createCollection(@Body() collectionRequestDto: CollectionRequestDto): Promise<Collection> {
+    return this.collectionService.createCollection(collectionRequestDto);
   }
   
   // READ
   @Get()
-  async getCollections(): Promise<MovieResponseDto[]> {
+  async getCollections(): Promise<CollectionResponseDto[]> {
     const collections = await this.collectionService.getCollections();
-    return collections.map((collection) => new MovieResponseDto(collection));
+    return collections.map((collection) => new CollectionResponseDto(collection));
   }
 
   @Get(':id')
-  async getCollectionById(@Param('id') id: number): Promise<MovieResponseDto> {
+  async getCollectionById(@Param('id') id: number): Promise<CollectionResponseDto> { 
     const collection = await this.collectionService.getCollectionById(id);
-    return new MovieResponseDto(collection);
+    return new CollectionResponseDto(collection); 
   }
 
-  // UPDATE
+  //UPDATE
   @Put(':id')
   async updateCollection(
     @Param('id') id: number,
     @Body() collectionRequestDto: CollectionRequestDto
-  ): Promise<MovieResponseDto> {
+  ): Promise<CollectionResponseDto> { 
     const updatedCollection = await this.collectionService.updateCollection(id, collectionRequestDto);
-    return new MovieResponseDto(updatedCollection);
+    return new CollectionResponseDto(updatedCollection); 
   }
-  // DELETE
+
+  //DELETE
   @Delete(':id')
   async deleteCollection(@Param('id') id: number): Promise<void> {
     await this.collectionService.deleteCollection(id);

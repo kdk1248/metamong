@@ -1,23 +1,29 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MovieService } from 'src/res/movie/service/movie.service';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
 import { Collection } from '../entity/collection.entity';
+import { CollectionRepository } from '../repository/collection.repository';
 
 @Injectable()
 export class CollectionService {
   constructor(
     @InjectRepository(Collection)
-    private readonly collectionRepository: Repository<Collection>,
+    private readonly collectionRepository: CollectionRepository,
+    @Inject(forwardRef(() => MovieService)) private readonly movieService: MovieService,
   ) {}
 
   // 컬렉션 생성
-  async createCollection(
-    collectionRequestDto: CollectionRequestDto,
-  ): Promise<Collection> {
-    const collection = this.collectionRepository.create(collectionRequestDto);
-    const savedCollection = await this.collectionRepository.save(collection);
-    return savedCollection;
+  async createCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {
+    const { movieIds } = collectionRequestDto; // movieIds가 DTO에 포함돼 있다고 가정
+    const movies = await this.movieService.findByIds(movieIds); // MovieService로 영화들을 찾음
+
+    const collection = this.collectionRepository.create({
+      ...collectionRequestDto,
+      movies, // 영화들을 컬렉션에 추가
+    });
+
+    return this.collectionRepository.save(collection);
   }
 
   // 모든 컬렉션 조회

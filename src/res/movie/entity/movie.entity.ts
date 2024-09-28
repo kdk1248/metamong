@@ -1,6 +1,9 @@
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
+import { Collection } from 'src/res/collection/entity/collection.entity';
+import { forwardRef } from '@nestjs/common';
+
 
 @Entity()
 export class Movie extends CommonBigPKEntity {
@@ -55,6 +58,10 @@ export class Movie extends CommonBigPKEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   modifiedAt: Date;
+
+  @ManyToMany(() => Collection, (collection) => collection.movies)
+  @JoinTable()
+  collections: Collection[];
 
   constructor(movieRequestDto: MovieRequestDto) {
     super();
