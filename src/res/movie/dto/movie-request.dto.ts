@@ -4,6 +4,7 @@ export class MovieRequestDto {
   genre: string;
   contents: string;
   posterUrl: string;
+  stillUrl: string;
   runningTime: number;
   favorite: number;
 

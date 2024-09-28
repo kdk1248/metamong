@@ -8,6 +8,7 @@ export class MovieResponseDto {
   contents: string;
   runningTime: number;
   posterUrl: string;
+  stillUrl: string;
   favorite: number;
 
   // KMDb
@@ -29,6 +30,7 @@ export class MovieResponseDto {
     this.contents = movie.contents;
     this.runningTime = movie.runningTime;
     this.posterUrl = movie.posterUrl;
+    this.stillUrl = movie.stillUrl;
     this.favorite = movie.favorite;
     this.nation = movie.nation;
     this.company = movie.company;

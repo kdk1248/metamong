@@ -22,6 +22,9 @@ export class Movie extends CommonBigPKEntity {
   @Column({ type: 'varchar', length: 255 })
   posterUrl: string;
 
+  @Column({ type: 'varchar', length: 255 })
+  stillUrl: string;
+
   @Column({ type: 'int' })
   favorite: number;
 
