@@ -134,4 +134,10 @@ export class MovieService {
     return movies;
   }
 
+
+  // collection
+  async findByIds(movieIds: number[]): Promise<Movie[]> {
+    return this.movieRepository.findByIds(movieIds);
+  }
+
 }
