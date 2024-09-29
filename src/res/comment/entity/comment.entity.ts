@@ -4,29 +4,34 @@ import { CommentRequestDto } from '../dto/comment-request.dto';
 import { User } from 'src/res/user/entity/user.entity';
 
 @Entity()
-export class Comment extends CommonBigPKEntity { // 공통적으로 사용하는 엔티티
+export class Comment extends CommonBigPKEntity {
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @Column('text', { unique: false, nullable: false })
-  content: string; //리뷰 내용 저장 
+  content: string; // 댓글 내용 저장
 
-  @ManyToOne(() => User, (user) => user.comments) // 리뷰와 사용자 간의 다대일 관계
-  user: User; // 리뷰를 작성한 사용자 
-  
-  @JoinColumn({ name: 'userId', referencedColumnName: 'id' }) //외래 키의 칼럼 , userId라는 외래 키를 사용하여 User 엔터티의 id 칼럼과 연결
-  replies: any; //대댓글
+  @Column({ nullable: false })
+  movieId: string; // 영화 ID 저장
 
-  constructor(commentRequestDto: CommentRequestDto) { // 리뷰요청에서 가져오는 생성자 
+  @ManyToOne(() => User, (user) => user.comments) // 댓글과 사용자 간의 다대일 관계
+  user: User; // 댓글을 작성한 사용자
+
+  @JoinColumn({ name: 'userId', referencedColumnName: 'id' }) // 외래 키 칼럼
+  replies: any; // 대댓글
+
+  constructor(commentRequestDto: CommentRequestDto) { // 댓글 요청에서 가져오는 생성자
     super();
     if (commentRequestDto) {
-      this.content = commentRequestDto.content; //리뷰오청에 있는 내용을 여기로 끌고 옴
-      this.user = { id: commentRequestDto.user } as unknown as User; // 리뷰요청에 있는 사용자를 여기로 끌고 옴 곧 id를 끌고 온다는거겠지 
+      this.content = commentRequestDto.content; // 댓글 요청에 있는 내용을 여기로 가져옴
+      this.movieId = commentRequestDto.movieId; // 영화 ID를 여기로 가져옴
+      this.user = { username: commentRequestDto.username } as unknown as User; // 댓글 요청에 있는 사용자 이름을 여기로 가져옴
     }
   }
 
-  update(commentRequestDto: CommentRequestDto): void { //리뷰요청에 있는 업데이트 -> 수정
-    this.content = commentRequestDto.content; // 리뷰요청에 있는 내용 
-    this.user = { id: commentRequestDto.user } as unknown as User;
+  update(commentRequestDto: CommentRequestDto): void { // 댓글 수정
+    this.content = commentRequestDto.content; // 댓글 요청에 있는 내용
+    this.movieId = commentRequestDto.movieId; // 영화 ID 업데이트
+    this.user = { username: commentRequestDto.username } as unknown as User; // 사용자 이름 업데이트
   }
 }

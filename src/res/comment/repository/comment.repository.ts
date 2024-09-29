@@ -7,9 +7,6 @@ import { Comment } from '../entity/comment.entity';
 
 @Injectable() // 의존성 주입
 export class CommentRepository {
-  findOne(id: number) {
-    throw new Error("Method not implemented.");
-  }
   constructor(
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
@@ -23,9 +20,13 @@ export class CommentRepository {
     }
   }
 
-  async getComments(): Promise<CommentResponseDto[]> {
+  async getComments(page: number, limit: number): Promise<CommentResponseDto[]> {
     try {
-      const comments = await this.commentRepository.find({ relations: ['user'] }); // 'user' relation 추가
+      const [comments, total] = await this.commentRepository.findAndCount({
+        relations: ['user'],
+        skip: (page - 1) * limit,
+        take: limit,
+      });
       return comments.map(
         (comment) =>
           new CommentResponseDto(comment.id, comment.user.username, comment.content),
@@ -44,6 +45,7 @@ export class CommentRepository {
     try {
       // CommentRequestDto의 내용을 엔티티에 반영
       comment.content = commentRequestDto.content;
+      comment.movieId = commentRequestDto.movieId; // movieId 업데이트
       await this.commentRepository.save(comment);
     } catch (error) {
       throw new Error(`Failed to update the comment with ID ${id}`);
