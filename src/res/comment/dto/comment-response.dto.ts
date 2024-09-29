@@ -1,10 +1,7 @@
-
 export class CommentResponseDto {
-    user: any;
     constructor(
-        public id: number,
-        public username: string,
-        public content: string,
+        public id: number,      // 댓글 ID
+        public username: string, // 사용자 이름
+        public content: string   // 댓글 내용
     ) {}
 }
-      
