@@ -25,7 +25,7 @@ export class CollectionRepository extends Repository<Collection> {
   async getCollectionById(id: number): Promise<Collection> {
     const collection = await this.findOneBy({ id });
     if (!collection) {
-      throw new Error(`Collection with id ${id} not found`);
+      throw new Error(`게시물이 존재하지 않습니다`);
     }
     return collection;
   }
@@ -34,7 +34,7 @@ export class CollectionRepository extends Repository<Collection> {
   async updateCollection(id: number, collectionRequestDto: CollectionRequestDto): Promise<Collection> {
     const collection = await this.findOneBy({ id });
     if (!collection) {
-      throw new Error(`Collection with id ${id} not found`);
+      throw new Error(`게시물이 존재하지 않습니다`);
     }
 
     this.merge(collection, collectionRequestDto);
@@ -45,7 +45,7 @@ export class CollectionRepository extends Repository<Collection> {
   async deleteCollection(id: number): Promise<void> {
     const result = await this.delete(id);
     if (result.affected === 0) {
-      throw new Error(`Collection with id ${id} not found`);
+      throw new Error(`게시물이 존재하지 않습니다`);
     }
   }
 }

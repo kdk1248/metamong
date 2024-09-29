@@ -39,7 +39,7 @@ export class CollectionService {
   async getCollectionById(id: number): Promise<Collection> {
     const collection = await this.collectionRepository.findOneBy({ id });
     if (!collection) {
-      throw new NotFoundException(`Collection with id ${id} not found`);
+      throw new NotFoundException(`게시물이 존재하지 않습니다`);
     }
     return collection;
   }
@@ -51,7 +51,7 @@ export class CollectionService {
   ): Promise<Collection> {
     const collection = await this.collectionRepository.findOneBy({ id });
     if (!collection) {
-      throw new NotFoundException(`Collection with id ${id} not found`);
+      throw new NotFoundException(`게시물이 존재하지 않습니다`);
     }
 
     this.collectionRepository.merge(collection, collectionRequestDto);
@@ -62,7 +62,7 @@ export class CollectionService {
   async deleteCollection(id: number): Promise<void> {
     const result = await this.collectionRepository.delete(id);
     if (result.affected === 0) {
-      throw new NotFoundException(`Collection with id ${id} not found`);
+      throw new NotFoundException(`게시물이 존재하지 않습니다`);
     }
   }
 }

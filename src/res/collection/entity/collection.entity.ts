@@ -1,5 +1,6 @@
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { Movie } from 'src/res/movie/entity/movie.entity';
+import { User } from 'src/res/user/entity/user.entity';
 import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
 
@@ -13,6 +14,9 @@ export class Collection extends CommonBigPKEntity {
 
   @Column({ type: 'bigint', default: 0 })
   like: number;
+
+  @ManyToMany(() => User, (user) => user.collections)
+  users: User[];
 
   @ManyToMany(() => Movie, (movie) => movie.collections)
   @JoinTable()
