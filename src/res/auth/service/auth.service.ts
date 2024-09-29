@@ -10,6 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { SignInRequestDto } from '../dto/sign-in-request.dto';
 import { SignUpRequestDto } from '../dto/sign-up-request.dto';
 import { User } from 'src/res/user/entity/user.entity';
+import { UserRole } from 'src/res/user/enum/user-role.enum';
 
 @Injectable()
 export class AuthService {
@@ -24,7 +25,7 @@ export class AuthService {
 
     // 회원 가입
     async signUp(signUpRequestDto: SignUpRequestDto): Promise<User> {
-        const { username, password, email, role, postalCode, address, detailAddress, phonenumber } = signUpRequestDto;
+        const { username, password, email } = signUpRequestDto;
         this.logger.verbose(`Attempting to sign up user with email: ${email}`);
 
         // 이메일 중복 확인
@@ -37,11 +38,7 @@ export class AuthService {
             username,
             password: hashedPassword, // 해싱된 비밀번호 사용
             email,
-            role,
-            postalCode,
-            address,
-            detailAddress,
-            phonenumber,
+            role: UserRole.USER
         });
 
         const savedUser = await this.usersRepository.save(newUser);
