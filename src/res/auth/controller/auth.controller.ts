@@ -20,6 +20,7 @@ export class AuthController {
     // 회원 가입 기능
     @Post('/signup')
     async signUp(@Body() signUpRequestDto: SignUpRequestDto): Promise<ApiResponse<UserResponseDto>> {
+        this.logger.verbose(`Attempting to sign up user with : ${signUpRequestDto}`);
         this.logger.verbose(`Attempting to sign up user with email: ${signUpRequestDto.email}`);
         const user = await this.authService.signUp(signUpRequestDto);
         const userResponseDto = new UserResponseDto(user);
