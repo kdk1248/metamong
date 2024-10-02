@@ -41,14 +41,14 @@ export class User extends CommonBigPKEntity {
     constructor(signupRequestDto?: SignupRequestDto) {
         super();
         if (signupRequestDto) {
-            this.username = signupRequestDto.name;
+            this.username = signupRequestDto.username;
             this.email = signupRequestDto.email;
             this.password = signupRequestDto.password;
         }
     }
 
     update(signupRequestDto: SignupRequestDto): void {
-        this.username = signupRequestDto.name;
+        this.username = signupRequestDto.username;
         this.email = signupRequestDto.email;
         this.password = signupRequestDto.password;
     }
