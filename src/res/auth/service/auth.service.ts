@@ -1,6 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
@@ -21,7 +20,7 @@ export class AuthService {
         private usersRepository: Repository<User>,
         private jwtService: JwtService,
         private httpService: HttpService
-    ){}
+    ) {}
 
     // 회원 가입
     async signUp(signUpRequestDto: SignUpRequestDto): Promise<User> {
@@ -119,8 +118,6 @@ export class AuthService {
             username: kakaoUsername,
             email: kakaoEmail,
             password: hashedPassword, // 해싱된 임시 비밀번호 사용
-
-            // 기타 필요한 필드 설정
         });
         return this.usersRepository.save(newUser);
     }
@@ -179,8 +176,10 @@ export class AuthService {
             email: user.email,
             userId: user.id,
             role: user.role
-            };
-        const accessToken = await this.jwtService.sign(payload);
+        };
+
+        // JWT 토큰 생성 시 expiresIn 옵션 추가
+        const accessToken = await this.jwtService.sign(payload, { expiresIn: '1h' }); // 1시간 설정
         this.logger.debug(`Generated JWT Token: ${accessToken}`);
         this.logger.debug(`User details: ${JSON.stringify(user)}`);
         return accessToken;
