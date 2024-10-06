@@ -15,13 +15,12 @@ import { GetUser } from '../decorator/get-user.decorator';
 export class AuthController {
     private readonly logger = new Logger(AuthController.name); // Logger 인스턴스 생성
 
-    constructor(private authService: AuthService){}
+    constructor(private authService: AuthService) {}
 
     // 회원 가입 기능
     @Post('/signup')
     async signUp(@Body() signUpRequestDto: SignUpRequestDto): Promise<ApiResponse<UserResponseDto>> {
         this.logger.verbose(`Attempting to sign up user with : ${signUpRequestDto}`);
-        this.logger.verbose(`Attempting to sign up user with email: ${signUpRequestDto.email}`);
         const user = await this.authService.signUp(signUpRequestDto);
         const userResponseDto = new UserResponseDto(user);
         this.logger.verbose(`User signed up successfully: ${JSON.stringify(userResponseDto)}`);
@@ -46,6 +45,22 @@ export class AuthController {
 
         res.status(200).json(new ApiResponse(true, 200, 'Sign in successful', { jwtToken, user: userResponseDto }));
     }
+
+    @Post('/logout')
+@UseGuards(AuthGuard()) // 인증된 사용자만 접근 가능
+async logout(@GetUser() user: User, @Res() res: Response): Promise<void> {
+    this.logger.verbose(`User logging out: ${user.email}`);
+    
+    // 로그아웃 처리 로직 (예: 쿠키 삭제 등)
+    res.clearCookie('Authorization');
+
+    // ApiResponse 객체 생성
+    const response = new ApiResponse(true, 200, 'Logout successful', null);
+
+    // 응답 반환
+    res.status(response.statusCode).json(response); // Response 객체에 JSON 형태로 반환
+}
+
 
     // 인증된 회원이 들어갈 수 있는 테스트 URL 경로
     @Post('/test')
