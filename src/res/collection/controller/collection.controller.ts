@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
-import { CollectionResponseDto } from '../dto/collection-response.dto'; // 수정된 부분
+import { CollectionResponseDto } from '../dto/collection-response.dto';
 import { CollectionService } from '../service/collection.service';
 import { Collection } from '../entity/collection.entity';
 
@@ -37,9 +37,14 @@ export class CollectionController {
     return new CollectionResponseDto(updatedCollection); 
   }
 
-  //DELETE
+  // DELETE
   @Delete(':id')
   async deleteCollection(@Param('id') id: number): Promise<void> {
+    const collectionExists = await this.collectionService.collectionExists(id);
+    if (!collectionExists) {
+      throw new NotFoundException(`Collection with id ${id} not found`);
+    }
     await this.collectionService.deleteCollection(id);
   }
 }
+

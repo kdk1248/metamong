@@ -1,4 +1,4 @@
-import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MovieService } from 'src/res/movie/service/movie.service';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
@@ -15,10 +15,15 @@ export class CollectionService {
 
   // 컬렉션 생성
   async createCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {
-    const { movieIds } = collectionRequestDto; // movieIds가 DTO에 포함돼 있다고 가정
+    const { name, movieIds } = collectionRequestDto; // movieIds가 DTO에 포함돼 있다고 가정
+    if (!name) {
+      throw new BadRequestException('Collection name is required');
+    }
+    
     const movies = await this.movieService.findByIds(movieIds); // MovieService로 영화들을 찾음
 
     const collection = this.collectionRepository.create({
+      name,
       ...collectionRequestDto,
       movies, // 영화들을 컬렉션에 추가
     });
@@ -42,6 +47,11 @@ export class CollectionService {
       throw new NotFoundException(`게시물이 존재하지 않습니다`);
     }
     return collection;
+  }
+
+  async collectionExists(id: number): Promise<boolean> {
+    const collection = await this.collectionRepository.findOneBy({ id });
+    return !!collection; // 존재하면 true, 아니면 false 반환
   }
 
   // 컬렉션 업데이트
