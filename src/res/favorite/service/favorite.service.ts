@@ -8,12 +8,19 @@ import {
 } from '../dto/favorite-response.dto';
 import { Favorite } from '../entity/favorite.entity';
 import { FavoriteRepository } from '../repository/favorite.repository';
+import { Repository } from 'typeorm/repository/Repository';
+import { Movie } from 'src/res/movie/entity/movie.entity';
+import { User } from 'src/res/user/entity/user.entity';
 
 @Injectable()
 export class FavoriteService {
   constructor(
     @InjectRepository(Favorite)
     private readonly favoriteRepository: FavoriteRepository, // FavoriteRepository 사용
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    @InjectRepository(Movie)
+    private readonly movieRepository: Repository<Movie>,
   ) {}
 
   // 관심 목록에 있는 영화들을 가져오는 메서드

@@ -15,8 +15,7 @@ export class FavoriteRepository {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Movie)
     private readonly movieRepository: Repository<Movie>,
-  ) { }
-
+  ) { } 
   async addFavorite(favoriteRequestDto: FavoriteRequestDto): Promise<Favorite> {
     // userId와 movieId를 기반으로 UserEntity와 MovieEntity를 데이터베이스에서 조회합니다.
     const user = await this.userRepository.findOne({ where: { id: favoriteRequestDto.userId } });
