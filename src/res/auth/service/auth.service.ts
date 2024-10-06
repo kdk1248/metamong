@@ -184,4 +184,5 @@ export class AuthService {
         this.logger.debug(`User details: ${JSON.stringify(user)}`);
         return accessToken;
     }
+    
 }
