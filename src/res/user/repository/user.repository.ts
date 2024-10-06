@@ -1,34 +1,37 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { User } from '../entity/user.entity';
 import { SignupRequestDto } from '../dto/user-request.dto';
 
 @Injectable()
 export class UserRepository {
-    private users: User[] = [];
+    constructor(
+        @InjectRepository(User)
+        private readonly userRepository: Repository<User>,
+    ) {}
 
-    create(userData: SignupRequestDto): User {
-        const newUser = new User();
-        newUser.username = userData.username; // 여기서 username 속성 사용
+    async create(userData: SignupRequestDto): Promise<User> {
+        const newUser = this.userRepository.create(); // TypeORM creates a new instance of User
+        newUser.username = userData.username;
         newUser.email = userData.email;
         newUser.password = userData.password;
-        newUser.id = this.users.length + 1; // 임시로 ID를 생성합니다.
-        return newUser;
+        return await this.userRepository.save(newUser); // Save the new user in the database
     }
 
     async save(user: User): Promise<User> {
-        this.users.push(user);
-        return user;
+        return await this.userRepository.save(user); // Save the user in the database
     }
 
     async findOne(condition: { where: { email: string } }): Promise<User | undefined> {
-        return this.users.find(user => user.email === condition.where.email);
+        return await this.userRepository.findOne({ where: { email: condition.where.email } });
     }
 
     async findOneByEmail(email: string): Promise<User | undefined> {
-        return this.users.find(user => user.email === email);
+        return await this.userRepository.findOne({ where: { email } });
     }
 
     async findAll(): Promise<User[]> {
-        return this.users;
+        return await this.userRepository.find();
     }
 }
