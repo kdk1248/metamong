@@ -17,7 +17,7 @@ export class UserService {
 
     async addUser(signupRequestDto: SignupRequestDto): Promise<User> {
         const user = this.userRepository.create(signupRequestDto);
-        return await this.userRepository.save(user);
+        return await this.userRepository.save(await user);
     }
 
     async findUserByEmail(email: string): Promise<User | undefined> {

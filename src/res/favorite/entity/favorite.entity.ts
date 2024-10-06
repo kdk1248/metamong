@@ -1,5 +1,5 @@
 import { Movie } from 'src/res/movie/entity/movie.entity';
-import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { FavoriteRequestDto } from '../dto/favorite-request.dto';
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { User } from 'src/res/user/entity/user.entity';
@@ -7,6 +7,9 @@ import { User } from 'src/res/user/entity/user.entity';
 
 @Entity()
 export class Favorite extends CommonBigPKEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
+  
   @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
   addedAt: Date;
 
