@@ -75,4 +75,9 @@ export class CollectionService {
       throw new NotFoundException(`게시물이 존재하지 않습니다`);
     }
   }
+
+  // 컬렉션 검색
+  async searchCollections(name: string): Promise<Collection[]> {
+    return this.collectionRepository.searchCollections(name);
+  }
 }

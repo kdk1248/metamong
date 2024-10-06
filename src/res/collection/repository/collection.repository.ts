@@ -68,4 +68,12 @@ export class CollectionRepository extends Repository<Collection> {
       throw new Error(`게시물이 존재하지 않습니다`);
     }
   }
+
+  // SEARCH
+  async searchCollections(name: string): Promise<Collection[]> {
+    return this.createQueryBuilder('collection')
+      .where('collection.name LIKE :name', { name: `%${name}%` })
+      .orderBy('collection.modifiedAt', 'DESC')
+      .getMany();
+  }
 }

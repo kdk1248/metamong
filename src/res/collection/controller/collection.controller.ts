@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
 import { CollectionResponseDto } from '../dto/collection-response.dto';
 import { CollectionService } from '../service/collection.service';
@@ -45,6 +45,13 @@ export class CollectionController {
       throw new NotFoundException(`Collection with id ${id} not found`);
     }
     await this.collectionService.deleteCollection(id);
+  }
+
+  // SEARCH
+  @Get('/search')
+  async searchCollections(@Query('name') name: string): Promise<CollectionResponseDto[]> {
+    const collections = await this.collectionService.searchCollections(name);
+    return collections.map((collection) => new CollectionResponseDto(collection));
   }
 }
 
