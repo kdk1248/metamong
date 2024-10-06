@@ -6,7 +6,6 @@ import {
   ShowFavoriteByIdResponseDto,
   ShowFavoritesResponseDto,
 } from '../dto/favorite-response.dto';
-import { Favorite } from '../entity/favorite.entity';
 import { FavoriteRepository } from '../repository/favorite.repository';
 
 @Injectable()
