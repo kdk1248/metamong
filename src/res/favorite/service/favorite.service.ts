@@ -11,10 +11,7 @@ import { FavoriteRepository } from '../repository/favorite.repository';
 
 @Injectable()
 export class FavoriteService {
-  constructor(
-    @InjectRepository(Favorite)
-    private readonly favoriteRepository: FavoriteRepository, // FavoriteRepository 사용
-  ) {}
+  constructor(private readonly favoriteRepository: FavoriteRepository) {}
 
   // 관심 목록에 있는 영화들을 가져오는 메서드
   async getUserFavoriteMovies(userId: string): Promise<any[]> {
