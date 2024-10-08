@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { lastValueFrom, map } from 'rxjs'; // RxJS에서 lastValueFrom import 필요
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { MovieResponseDto } from '../dto/movie-response.dto';
 import { Movie } from '../entity/movie.entity';
@@ -137,7 +137,12 @@ export class MovieService {
 
   // collection
   async findByIds(movieIds: number[]): Promise<Movie[]> {
-    return this.movieRepository.findByIds(movieIds);
-  }
+    if (!Array.isArray(movieIds)) {
+      movieIds = [movieIds]; // 배열로 변환
+    }
 
+    return this.movieRepository.find({
+      where: { id: In(movieIds) },
+    });
+  }
 }
