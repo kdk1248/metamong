@@ -15,13 +15,13 @@ export class Collection extends CommonBigPKEntity {
   @Column({ type: 'bigint', default: 0 })
   like: number;
 
-  @ManyToMany(() => User, (user) => user.collections)
-  users: User[];
+  @Column({ type: 'int' }) // userId를 number로 변경
+  userId: number;
 
   @ManyToMany(() => Movie, (movie) => movie.collections)
   @JoinTable()
   movies: Movie[];
-  
+
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
@@ -32,10 +32,12 @@ export class Collection extends CommonBigPKEntity {
     super();
     if (collectionRequestDto) {
       this.name = collectionRequestDto.name;
+      this.userId = collectionRequestDto.userId[0]; // userId가 배열에서 첫 번째 요소로 설정
     }
   }
 
   update(collectionRequestDto: CollectionRequestDto) {
     this.name = collectionRequestDto.name;
+    this.userId = collectionRequestDto.userId[0]; // userId 업데이트
   }
 }

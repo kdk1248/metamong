@@ -1,11 +1,10 @@
-import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Comment } from 'src/res/comment/entity/comment.entity';
+import { CommentReply } from 'src/res/commentreply/entity/commentreply.entity';
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { Favorite } from 'src/res/favorite/entity/favorite.entity';
-import { Comment } from 'src/res/comment/entity/comment.entity';
-import { UserRole } from '../enum/user-role.enum';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { SignupRequestDto } from '../dto/user-request.dto';
-import { CommentReply } from 'src/res/commentreply/entity/commentreply.entity';
-import { Collection } from 'src/res/collection/entity/collection.entity';
+import { UserRole } from '../enum/user-role.enum';
 
 @Entity()
 export class User extends CommonBigPKEntity {
@@ -32,11 +31,6 @@ export class User extends CommonBigPKEntity {
 
     @OneToMany(() => CommentReply, (commentreply) => commentreply.user)
     replies: CommentReply[];
-
-    @ManyToMany(() => Collection, (collection) => collection.users)
-    @JoinTable()
-    collections: Collection[];
-;
 
     constructor(signupRequestDto?: SignupRequestDto) {
         super();

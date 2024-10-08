@@ -17,7 +17,7 @@ export class CollectionRepository extends Repository<Collection> {
 
   // CREATE
   async createCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {
-    const { name, movieIds, userIds } = collectionRequestDto;
+    const { name, movieIds, userId } = collectionRequestDto;
     
     const collection = this.create(collectionRequestDto);
     return this.save(collection);
@@ -42,24 +42,21 @@ export class CollectionRepository extends Repository<Collection> {
 
   // UPDATE
   async updateCollection(id: number, collectionRequestDto: CollectionRequestDto): Promise<Collection> {
-    const { name, movieIds, userIds } = collectionRequestDto;
+    const { name, movieIds, userId } = collectionRequestDto;
 
     const collection = await this.findOneBy({ id });
     if (!collection) {
-      throw new Error(`게시물이 존재하지 않습니다`);
+        throw new Error(`게시물이 존재하지 않습니다`);
     }
 
     const movies = await this.movieRepository.find({
-      where: { id: In(movieIds) },
+        where: { id: In(movieIds) },
     });
 
-    const users = await this.userRepository.find({
-      where: { id: In(userIds) },
-    });
-
-    this.merge(collection, { name, movies, users });
+    // user를 설정하는 부분 제거
+    this.merge(collection, { name, movies }); // user는 더 이상 포함되지 않음
     return this.save(collection);
-  }
+}
 
   // DELETE
   async deleteCollection(id: number): Promise<void> {
