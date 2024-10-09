@@ -21,20 +21,25 @@ export class CommentRepository {
   }
 
   async getComments(page: number, limit: number): Promise<CommentResponseDto[]> {
+    console.log(`Fetching comments - Page: ${page}, Limit: ${limit}`);
     try {
       const [comments, total] = await this.commentRepository.findAndCount({
         relations: ['user'],
         skip: (page - 1) * limit,
         take: limit,
       });
+      console.log(`Total Comments: ${total}, Comments Fetched: ${comments.length}`);
       return comments.map(
         (comment) =>
           new CommentResponseDto(comment.id, comment.user.username, comment.content),
       );
     } catch (error) {
+      console.error('Error retrieving comments:', error);
       throw new Error('Failed to retrieve comments');
     }
   }
+
+  
 
   async update(id: number, commentRequestDto: CommentRequestDto): Promise<void> {
     const comment = await this.commentRepository.findOne({ where: { id }, relations: ['user'] });
