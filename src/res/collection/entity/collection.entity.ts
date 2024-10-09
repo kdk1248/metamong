@@ -27,6 +27,7 @@ export class Collection extends CommonBigPKEntity {
 
   @UpdateDateColumn({ type: 'timestamp' })
   modifiedAt: Date;
+  favorite: number;
 
   constructor(collectionRequestDto: CollectionRequestDto) {
     super();
