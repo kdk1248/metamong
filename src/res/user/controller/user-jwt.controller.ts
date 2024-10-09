@@ -26,7 +26,6 @@ export class UserController {
         const newUser = {
             name: request.username,
             email: request.email,
-            phoneNumber: request.phoneNumber,
             password: hashedPassword,
         };
         users.push(newUser);

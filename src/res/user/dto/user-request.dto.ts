@@ -24,10 +24,6 @@ export class SignupRequestDto {
 
     @IsNotEmpty()
     @IsString()
-    phoneNumber: string;
-
-    @IsNotEmpty()
-    @IsString()
     @MinLength(6) // 비밀번호 최소 길이 설정
     password: string;
 
