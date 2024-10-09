@@ -27,7 +27,7 @@ export class User extends CommonBigPKEntity {
     @OneToMany(() => Comment, (comment) => comment.user)
     comments: Comment[];
 
-    @OneToMany(() => Favorite, (favorite) => favorite.user)
+    @OneToMany(() => Favorite, (favorite) => favorite.user, { eager: false } )
     favorite: Favorite[];
 
     @OneToMany(() => CommentReply, (commentreply) => commentreply.user)
