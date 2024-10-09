@@ -41,9 +41,12 @@ export class AuthService {
         });
 
         const savedUser = await this.usersRepository.save(newUser);
+        
 
         this.logger.verbose(`User signed up successfully with email: ${email}`);
         this.logger.debug(`User details: ${JSON.stringify(savedUser)}`);
+
+        
 
         return savedUser;
     }

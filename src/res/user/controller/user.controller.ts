@@ -1,10 +1,11 @@
-import { Controller, Post, Body, HttpException, HttpStatus, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, HttpException, HttpStatus, Get, Param, UseGuards, Req } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '../service/user.service';
 import { LoginRequestDto, SignupRequestDto } from '../dto/user-request.dto';
 import { LoginResponseDto } from '../dto/user-response.dto';
 import { User } from '../entity/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('api/user')
 export class UserController {
@@ -12,10 +13,15 @@ export class UserController {
         private readonly userService: UserService,
         private readonly jwtService: JwtService
     ) {}
+    @UseGuards(AuthGuard('jwt')) // JWT 인증 가드 사용
+    @Get('me')
+    getMe(@Req() req) {
+        return this.userService.findOneByUsername(req.username); // 로그인한 사용자 정보 반환
+    }
 
     @Post('signups')
     async signup(@Body() request: SignupRequestDto): Promise<LoginResponseDto> {
-        const existingUser = await this.userService.findUserByEmail(request.email);
+        const existingUser = await this.userService.findUserByUsername(request.username);
         if (existingUser) {
             throw new HttpException('Email already exists.', HttpStatus.BAD_REQUEST);
         }
@@ -29,7 +35,7 @@ export class UserController {
 
     @Post('logins')
     async login(@Body() request: LoginRequestDto): Promise<LoginResponseDto> {
-        const user = await this.userService.findUserByEmail(request.email);
+        const user = await this.userService.findUserByUsername(request.username);
         if (!user) {
             throw new HttpException('Invalid email or password.', HttpStatus.UNAUTHORIZED);
         }
@@ -45,9 +51,9 @@ export class UserController {
         return new LoginResponseDto('Login successful', token);
     }
 
-    @Get('mypage/:email') // 이메일을 URL 파라미터로 받음
-    async getUserByEmail(@Param('email') email: string): Promise<{ username: string; email: string } | HttpException> {
-        const user = await this.userService.findUserByEmail(email);
+    @Get('mypage/:username') // username을 URL 파라미터로 받음
+    async getUserByUsername(@Param('username') username: string): Promise<{ username: string; email: string } | HttpException> {
+        const user = await this.userService.findUserByUsername(username);
         if (!user) {
             throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
         }
