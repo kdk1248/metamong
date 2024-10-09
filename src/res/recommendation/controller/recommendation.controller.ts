@@ -7,7 +7,7 @@ export class RecommendationController {
 
   // 사용자가 추천을 받을 수 있는 엔드포인트
   @Get(':userId')
-  async recommend(@Param('userId') userId: string) {
+  async recommend(@Param('userId') userId: number) {
     return this.recommendationService.recommendMovies(userId);
   }
 }
