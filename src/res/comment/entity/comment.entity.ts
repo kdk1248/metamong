@@ -24,6 +24,12 @@ export class Comment extends CommonBigPKEntity {
   @OneToMany(() => Favorite, favorite => favorite.comment)
   favorite: Favorite[];
 
+  @Column({ default: 0 })
+    favoriteCount: number; 
+
+  @Column({ default: 0 })
+  dislikeCount: number;
+
   constructor(commentRequestDto: CommentRequestDto) { // 댓글 요청에서 가져오는 생성자
     super();
     if (commentRequestDto) {
