@@ -23,6 +23,8 @@ export class CommentReplyService {
       commentReply.user.id,
       commentReply.comment.id,
       commentReply.content,
+      commentReply.favoriteCount,
+      commentReply.dislikeCount,
       commentReply.createdAt,
     );
   }
@@ -39,6 +41,8 @@ export class CommentReplyService {
       commentReply.user.id,
       commentReply.comment.id,
       commentReply.content,
+      commentReply.favoriteCount,
+      commentReply.dislikeCount,
       commentReply.createdAt,
     );
   }
@@ -55,6 +59,8 @@ export class CommentReplyService {
           reply.user.id,
           reply.comment.id,
           reply.content,
+          reply.favoriteCount,
+          reply.dislikeCount,
           reply.createdAt,
         ),
     );

@@ -22,6 +22,12 @@ export class CommentReply extends CommonBigPKEntity {
   @JoinColumn({ name: 'commentId' })
   comment: Comment;
 
+  @Column({ default: 0 })
+  favoriteCount: number; // 좋아요
+
+  @Column({ default: 0 })
+  dislikeCount: number; // 싫어요
+
   constructor(commentreplyRequestDto?: CommentReplyRequestDto) {
     super();
     if (commentreplyRequestDto) {
