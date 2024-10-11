@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 import { FavoriteRequestDto } from '../dto/favorite-request.dto';
 import {
   FavoriteResponseDto,
@@ -12,33 +11,29 @@ import { FavoriteRepository } from '../repository/favorite.repository';
 export class FavoriteService {
   constructor(private readonly favoriteRepository: FavoriteRepository) {}
 
-  // 관심 목록에 있는 영화들을 가져오는 메서드
-  async getUserFavoriteMovies(userId: string): Promise<any[]> {
-    // 사용자 ID로 관심 영화 목록을 가져옴
-    const favorites = await this.favoriteRepository.findAllByUser(parseInt(userId, 10));
-    
-    // 관심 영화 목록이 없는 경우 예외 처리
-    if (!favorites || favorites.length === 0) {
-      throw new NotFoundException(`No favorite movies found for user with ID ${userId}`);
-    }
-
-    // 사용자의 관심 영화 목록 반환 (영화의 제목과 장르를 포함)
-    return favorites.map(favorite => ({
-      title: favorite.movie.title,
-      genre: favorite.movie.genre, // genre 필드는 영화의 장르를 저장하는 곳이라고 가정
-    }));
+  async getUserFavorites(userId: number): Promise<ShowFavoritesResponseDto[]> {
+    const favorites = await this.favoriteRepository.findAllByUser(userId);
+    return favorites.map((favorite) => {
+      const { movie, comment, collection } = favorite;
+      return new ShowFavoritesResponseDto(
+        favorite.user.id,
+        favorite.addedAt,
+        movie ? movie.id : null, // movie ID가 없을 경우 null 처리
+        movie ? movie.title : '', // movie 제목이 없을 경우 빈 문자열 처리
+        comment ? comment.id : null, // comment ID가 없을 경우 null 처리
+        comment ? comment.content : '', // comment 내용이 없을 경우 빈 문자열 처리
+        collection ? collection.id : null, // collection ID가 없을 경우 null 처리
+        collection ? collection.name : '', // collection 제목이 없을 경우 빈 문자열 처리
+      );
+    });
   }
 
-  async addFavorite(
-    favoriteRequestDto: FavoriteRequestDto,
-  ): Promise<FavoriteResponseDto> {
-    // FavoriteRepository의 addFavorite 메서드를 사용
-    const savedFavorite =
-      await this.favoriteRepository.addFavorite(favoriteRequestDto);
+  async addFavorite(favoriteRequestDto: FavoriteRequestDto): Promise<FavoriteResponseDto> {
+    const savedFavorite = await this.favoriteRepository.addFavorite(favoriteRequestDto);
     return new FavoriteResponseDto(
       savedFavorite.id,
       true,
-      '관심 영화가 추가됨',
+      '관심 항목이 추가되었습니다.'
     );
   }
 
@@ -49,34 +44,25 @@ export class FavoriteService {
     }
 
     await this.favoriteRepository.removeFavorite(id);
-    return new FavoriteResponseDto(id, true, '관심 영화가 삭제됨');
-  }
-
-  async getUserFavorites(userId: number): Promise<ShowFavoritesResponseDto[]> {
-    const favorites = await this.favoriteRepository.findAllByUser(userId);
-    return favorites.map(
-      (favorite) =>
-        new ShowFavoritesResponseDto(
-          favorite.user.id,
-          favorite.movie.id,
-          favorite.movie.title,
-          favorite.addedAt,
-        ),
-    );
+    return new FavoriteResponseDto(id, true, '관심 항목이 삭제되었습니다.');
   }
 
   async getFavoriteById(id: number): Promise<ShowFavoriteByIdResponseDto> {
     const favorite = await this.favoriteRepository.findById(id);
-
     if (!favorite) {
       throw new NotFoundException(`Favorite with ID ${id} not found`);
     }
 
+    const { movie, comment, collection } = favorite;
     return new ShowFavoriteByIdResponseDto(
       favorite.user.id,
-      favorite.movie.id,
-      favorite.movie.title,
       favorite.addedAt,
+      movie ? movie.id : null,
+      movie ? movie.title : '',
+      comment ? comment.id : null,
+      comment ? comment.content : '',
+      collection ? collection.id : null,
+      collection ? collection.name : '',
     );
   }
 }

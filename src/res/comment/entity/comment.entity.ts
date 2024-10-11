@@ -1,7 +1,8 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { CommentRequestDto } from '../dto/comment-request.dto';
 import { User } from 'src/res/user/entity/user.entity';
+import { Favorite } from 'src/res/favorite/entity/favorite.entity';
 
 @Entity()
 export class Comment extends CommonBigPKEntity {
@@ -19,6 +20,15 @@ export class Comment extends CommonBigPKEntity {
 
   @JoinColumn({ name: 'userId', referencedColumnName: 'id' }) // 외래 키 칼럼
   replies: any; // 대댓글
+
+  @OneToMany(() => Favorite, favorite => favorite.comment)
+  favorite: Favorite[];
+
+  @Column({ default: 0 })
+    favoriteCount: number; 
+
+  @Column({ default: 0 })
+  dislikeCount: number;
 
   constructor(commentRequestDto: CommentRequestDto) { // 댓글 요청에서 가져오는 생성자
     super();

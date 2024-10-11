@@ -1,38 +1,45 @@
-import { Movie } from 'src/res/movie/entity/movie.entity';
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { FavoriteRequestDto } from '../dto/favorite-request.dto';
-import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from 'src/res/user/entity/user.entity';
-
+import { Movie } from 'src/res/movie/entity/movie.entity';
+import { Comment } from 'src/res/comment/entity/comment.entity';
+import { Collection } from 'src/res/collection/entity/collection.entity';
+import { FavoriteRequestDto } from '../dto/favorite-request.dto';
 
 @Entity()
-export class Favorite extends CommonBigPKEntity {
+export class Favorite {
   @PrimaryGeneratedColumn()
   id: number;
-  
-  @Column('timestamp', { default: () => 'CURRENT_TIMESTAMP' })
-  addedAt: Date;
 
-  @ManyToOne(() => User, (user) => user.favorite)
-  @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
+  @ManyToOne(() => User, user => user.favorite)
   user: User;
 
-  @ManyToOne(() => Movie, (movie) => movie.favorite)
-  @JoinColumn({ name: 'movieId', referencedColumnName: 'id' })
-  movie: Movie;
+  @ManyToOne(() => Movie, movie => movie.favorite, { nullable: true })
+  movie?: Movie;
 
-  constructor(user:User) {
-    super();
-    if (FavoriteRequestDto) {
-      this.user = { id: FavoriteRequestDto.userId } as User;
-      this.movie = { id: FavoriteRequestDto.movieId } as Movie;
+  @ManyToOne(() => Comment, comment => comment.favorite, { nullable: true })
+  comment?: Comment;
+
+  @ManyToOne(() => Collection, collection => collection.favorite, { nullable: true })
+  collection?: Collection;
+
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  addedAt: Date;
+
+  constructor(favoriteRequestDto: FavoriteRequestDto) {
+    if (favoriteRequestDto) {
+      this.user = { id: favoriteRequestDto.userId } as User;
+      this.movie = favoriteRequestDto.movieId ? { id: favoriteRequestDto.movieId } as Movie : undefined;
+      this.comment = favoriteRequestDto.commentId ? { id: favoriteRequestDto.commentId } as Comment : undefined;
+      this.collection = favoriteRequestDto.collectionId ? { id: favoriteRequestDto.collectionId } as Collection : undefined;
       this.addedAt = new Date();
     }
   }
 
   update(favoriteRequestDto: FavoriteRequestDto): void {
     this.user = { id: favoriteRequestDto.userId } as User;
-    this.movie = { id: favoriteRequestDto.movieId } as Movie;
+    this.movie = favoriteRequestDto.movieId ? { id: favoriteRequestDto.movieId } as Movie : undefined;
+    this.comment = favoriteRequestDto.commentId ? { id: favoriteRequestDto.commentId } as Comment : undefined;
+    this.collection = favoriteRequestDto.collectionId ? { id: favoriteRequestDto.collectionId } as Collection : undefined;
     this.addedAt = new Date();
   }
 }

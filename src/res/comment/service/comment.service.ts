@@ -11,7 +11,7 @@ export class CommentService {
   async createComment(commentRequestDto: CommentRequestDto): Promise<CommentResponseDto> {
     const comment = new Comment(commentRequestDto); // Comment 엔티티 생성
     const savedComment = await this.commentRepository.save(comment); // DB에 저장
-    return new CommentResponseDto(savedComment.id, savedComment.user.username, savedComment.content);
+    return new CommentResponseDto(savedComment.id, savedComment.user.username, savedComment.content, savedComment.favoriteCount, savedComment.dislikeCount);
   }
 
   async getComments(page: number, limit: number): Promise<CommentResponseDto[]> {
@@ -23,7 +23,7 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException(`Comment with ID ${id} not found`);
     }
-    return new CommentResponseDto(comment.id, comment.user.username, comment.content);
+    return new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.favoriteCount , comment.dislikeCount);
   }
 
   async updateComment(id: number, commentRequestDto: CommentRequestDto): Promise<number> {
@@ -43,5 +43,22 @@ export class CommentService {
     }
     await this.commentRepository.delete(id); // 댓글 삭제
     return id;
+  }
+
+  async favoriteCountComment(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+    comment.favoriteCount++;
+    await this.commentRepository.save(comment);
+    return new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.dislikeCount, comment.favoriteCount);
+}
+
+
+  async dislikeCountComment(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+    comment.dislikeCount++;
+    await this.commentRepository.save(comment);
+    return new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.favoriteCount ,comment.dislikeCount);
   }
 }

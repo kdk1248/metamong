@@ -10,29 +10,63 @@ export class FavoriteResponseDto {
     }
   }
   export class ShowFavoritesResponseDto {
-    userId: number;    // 사용자의 ID
-    movieId: number;   // 영화의 ID
-    movieTitle: string; // 영화 제목
-    addedAt: Date;     // 관심 목록에 추가된 날짜
+    userId: number;           // 사용자의 ID
+    addedAt: Date;            // 관심 목록에 추가된 날짜
+    movieId?: number;         // 영화의 ID
+    movieTitle?: string;      // 영화 제목
+    commentId?: number;       // 댓글의 ID
+    commentText?: string;     // 댓글 내용
+    collectionId?: number;    // 컬렉션의 ID
+    collectionTitle?: string; // 컬렉션 제목
   
-    constructor(userId: number, movieId: number, movieTitle: string, addedAt: Date) {
+    constructor(
+      userId: number,
+      addedAt: Date,
+      movieId?: number,
+      movieTitle?: string,
+      commentId?: number,
+      commentText?: string,
+      collectionId?: number,
+      collectionTitle?: string,
+    ) {
       this.userId = userId;
+      this.addedAt = addedAt;
       this.movieId = movieId;
       this.movieTitle = movieTitle;
-      this.addedAt = addedAt;
+      this.commentId = commentId;
+      this.commentText = commentText;
+      this.collectionId = collectionId;
+      this.collectionTitle = collectionTitle;
     }
   }
   export class ShowFavoriteByIdResponseDto {
-    userId: number;    // 사용자의 ID
-    movieId: number;   // 영화의 ID
-    movieTitle: string; // 영화 제목
-    addedAt: Date;     // 관심 목록에 추가된 날짜
+    userId: number;  
+    addedAt: Date;          
+    movieId?: number;         
+    movieTitle?: string;     
+    commentId?: number;      
+    commentContent?: string;    
+    collectionId?: number;   
+    collectionName?: string;        
   
-    constructor(userId: number, movieId: number, movieTitle: string, addedAt: Date) {
+    constructor(
+      userId: number,
+      addedAt: Date,
+      movieId?: number,
+      movieTitle?: string,
+      commentId?: number,
+      commentContent?: string,
+      collectionId?: number,
+      collectionName?: string,
+    ) {
       this.userId = userId;
+      this.addedAt = addedAt;
       this.movieId = movieId;
       this.movieTitle = movieTitle;
-      this.addedAt = addedAt;
+      this.commentId = commentId;
+      this.commentContent = commentContent;
+      this.collectionId = collectionId;
+      this.collectionName = collectionName;
     }
   }
   

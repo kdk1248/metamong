@@ -25,9 +25,9 @@ export class RecommendationService {
   }
 
   // 특정 장르가 많이 저장된 경우 해당 장르의 영화를 KMDb API에서 추천
-  async recommendMovies(userId: string) {
+  async recommendMovies(userId: number) {
     // 관심 목록에서 사용자가 저장한 영화 가져오기
-    const favoriteMovies = await this.favoriteService.getUserFavoriteMovies(userId);
+    const favoriteMovies = await this.favoriteService.getUserFavorites(userId);
 
     // 장르 카운트 계산
     const genreCount = this.countGenres(favoriteMovies);

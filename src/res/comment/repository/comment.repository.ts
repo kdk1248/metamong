@@ -31,7 +31,7 @@ export class CommentRepository {
       console.log(`Total Comments: ${total}, Comments Fetched: ${comments.length}`);
       return comments.map(
         (comment) =>
-          new CommentResponseDto(comment.id, comment.user.username, comment.content),
+          new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.favoriteCount , comment.dislikeCount),
       );
     } catch (error) {
       console.error('Error retrieving comments:', error);
