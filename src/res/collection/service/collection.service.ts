@@ -104,4 +104,23 @@ export class CollectionService {
   async searchCollections(name: string): Promise<Collection[]> {
     return this.collectionRepository.searchCollections(name);
   }
+
+  // 컬렉션 좋아요 (개수)
+  async incrementFavoriteCount(collectionId: number): Promise<Collection> {
+    const collection = await this.collectionRepository.findOne({ where: { id: collectionId } });
+
+    collection.favoriteCount = (collection.favoriteCount || 0) + 1;
+    return this.collectionRepository.save(collection);
+  }
+
+  // 컬렉션 좋아요 취소
+  async decrementFavoriteCount(collectionId: number): Promise<Collection> {
+    const collection = await this.collectionRepository.findOne({ where: { id: collectionId } });
+
+    collection.favoriteCount = Math.max((collection.favoriteCount || 0) - 1, 0);
+    return this.collectionRepository.save(collection);
+  }
+
+
+
 }

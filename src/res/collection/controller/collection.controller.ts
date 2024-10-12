@@ -73,5 +73,18 @@ export class CollectionController {
     const collections = await this.collectionService.searchCollections(name);
     return collections.map((collection) => new CollectionResponseDto(collection));
   }
+
+  // 좋아요, 좋아요 취소
+  @Post(':id/favorite')
+  async favoriteCollection(@Param('id') id: number): Promise<CollectionResponseDto> {
+    const updatedCollection = await this.collectionService.incrementFavoriteCount(id);
+    return new CollectionResponseDto(updatedCollection);
+  }
+
+  @Delete(':id/favorite')
+  async unfavoriteCollection(@Param('id') id: number): Promise<CollectionResponseDto> {
+    const updatedCollection = await this.collectionService.decrementFavoriteCount(id);
+    return new CollectionResponseDto(updatedCollection);
+  }
 }
 
