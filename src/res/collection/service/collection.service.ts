@@ -29,16 +29,16 @@ export class CollectionService {
     return this.collectionRepository.save(collection);
   }
 
-  // 컬렉션에 영화 추가
-  async addMoviesToCollection(collectionId: number, movieId: number[]): Promise<Collection> {
+  // 컬렉션에 특정 영화 추가
+  async addMovieToCollection(collectionId: number, movieId: number): Promise<Collection> {
     const collection = await this.collectionRepository.findOneBy({ id: collectionId });
     if (!collection) {
       throw new NotFoundException(`컬렉션이 존재하지 않습니다`);
     }
 
-    const movie = await this.movieService.findByIds(movieId); // 영화들을 찾아서
+    const movie = await this.movieService.getMovieById(movieId);
 
-    collection.movies = [...collection.movies, ...movie]; // 기존 영화에 추가
+    collection.movies = [...collection.movies, movie]; // 단일 객체로 추가
     return this.collectionRepository.save(collection); // 변경 사항 저장
   }
 
@@ -80,7 +80,6 @@ export class CollectionService {
   if (!collection) {
     throw new NotFoundException(`게시물이 존재하지 않습니다`);
   }
-
   // userId는 병합하지 않고, 필요한 다른 속성만 업데이트합니다.
   const { userId, ...updateData } = collectionRequestDto;
   

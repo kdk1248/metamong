@@ -55,12 +55,12 @@ export class MovieService {
     return movies.map((movie) => new MovieResponseDto(movie));
   }
 
-  async getMovieById(id: number): Promise<MovieResponseDto> {
-    const movie = await this.movieRepository.findOneBy({ id });
+  async getMovieById(id: number): Promise<Movie> {
+    const movie = await this.movieRepository.findOne({ where: { id } });
     if (!movie) {
       throw new NotFoundException(`Movie with id ${id} not found`);
     }
-    return new MovieResponseDto(movie);
+    return movie;
   }
 
   async filterMovies(filterOptions: { genre?: string, directorId?: number, actor?: string }): Promise<MovieResponseDto[]> {
