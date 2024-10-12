@@ -23,12 +23,12 @@ export class UserRepository {
         return await this.userRepository.save(user); // Save the user in the database
     }
 
-    async findOne(condition: { where: { username: string } }): Promise<User | undefined> {
-        return await this.userRepository.findOne({ where: { email: condition.where.username } });
+    async findOne(condition: { where: { email: string } }): Promise<User | undefined> {
+        return await this.userRepository.findOne({ where: { email: condition.where.email } });
     }
 
-    async findOneByUsername(username: string): Promise<User | undefined> {
-        return await this.userRepository.findOne({ where: { username } });
+    async findOneByEmail(email: string): Promise<User | undefined> {
+        return await this.userRepository.findOne({ where: { email } });
     }
 
     async findAll(): Promise<User[]> {

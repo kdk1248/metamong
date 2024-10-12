@@ -15,37 +15,37 @@ export class UserService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
-  ) {}
+  ) { }
 
-  // 사용자 이름으로 조회
-  async findOneByUsername(username: string): Promise<User> {
-    return this.userRepository.findOne({ where: { username } });
+  // 사용자 이메일로 조회
+  async findOneByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
   }
 
   // 회원정보+파일 정보 조회
-  async getUserByUsernameWithProfile(username: string): Promise<User> {
-    this.logger.verbose(`Retrieving User with username ${username}`);
+  async getUserByEmailWithProfile(email: string): Promise<User> {
+    this.logger.verbose(`Retrieving User with email ${email}`);
     const foundUser = await this.userRepository.createQueryBuilder('user')
       .leftJoinAndSelect('user.profilePictures', 'ProfilePicture')
-      .where('user.username = :username', { username })
+      .where('user.email = :email', { email })
       .getOne();
 
     if (!foundUser) {
-      this.logger.warn(`User with username ${username} not found`);
-      throw new NotFoundException(`User with username ${username} not found`);
+      this.logger.warn(`User with email ${email} not found`);
+      throw new NotFoundException(`User with email ${email} not found`);
     }
-    this.logger.verbose(`User retrieved successfully with username ${username}: ${JSON.stringify(foundUser)}`);
+    this.logger.verbose(`User retrieved successfully with email ${email}: ${JSON.stringify(foundUser)}`);
     return foundUser;
   }
 
   // 회원정보 수정
-  async updateUser(username: string, updateUserRequestDto: UpdateUserRequestDto, logginedUser: User, file?: Express.Multer.File): Promise<User> {
-    this.logger.verbose(`Attempting to update User with username ${username}`);
+  async updateUser(email: string, updateUserRequestDto: UpdateUserRequestDto, logginedUser: User, file?: Express.Multer.File): Promise<User> {
+    this.logger.verbose(`Attempting to update User with email ${email}`);
 
-    const foundUser = await this.getUserByUsernameWithProfile(username);
+    const foundUser = await this.getUserByEmailWithProfile(email);
 
     if (foundUser.id !== logginedUser.id) {
-      this.logger.warn(`User ${logginedUser.username} attempted to update User details ${username} without permission`);
+      this.logger.warn(`User ${logginedUser.email} attempted to update User details ${email} without permission`);
       throw new UnauthorizedException(`You do not have permission to update this User`);
     }
 
@@ -53,20 +53,20 @@ export class UserService {
       Object.assign(foundUser, updateUserRequestDto)
     );
 
-    this.logger.verbose(`User with username ${username} updated successfully: ${JSON.stringify(updatedUser)}`);
+    this.logger.verbose(`User with email ${email} updated successfully: ${JSON.stringify(updatedUser)}`);
     return updatedUser;
   }
 
   // 회원 탈퇴
-  async deleteUserByUsername(username: string, logginedUser: User): Promise<void> {
-    this.logger.verbose(`User ${logginedUser.username} is attempting to delete User with username ${username}`);
-    const foundUser = await this.findOneByUsername(username);
+  async deleteUserByEmail(email: string, logginedUser: User): Promise<void> {
+    this.logger.verbose(`User ${logginedUser.email} is attempting to delete User with email ${email}`);
+    const foundUser = await this.findOneByEmail(email);
     if (foundUser.id !== logginedUser.id) {
-      this.logger.warn(`User ${logginedUser.username} attempted to delete User ${username} without permission`);
+      this.logger.warn(`User ${logginedUser.email} attempted to delete User ${email} without permission`);
       throw new UnauthorizedException(`You do not have permission to delete this User`);
     }
     await this.userRepository.remove(foundUser);
-    this.logger.verbose(`User with username ${username} deleted by User ${logginedUser.username}`);
+    this.logger.verbose(`User with email ${email} deleted by User ${logginedUser.email}`);
   }
 
   // 사용자 등록
@@ -76,18 +76,18 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
-  // 사용자 이름으로 찾기
-  async findUserByUsername(username: string): Promise<User | undefined> {
-    return await this.userRepository.findOne({ where: { username } });
+  // 사용자 이메일로 찾기
+  async findUserByEmail(email: string): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { email } });
   }
 
   // 사용자 등록
   async signup(signupRequestDto: SignupRequestDto): Promise<string> {
-    const existingUser = await this.findUserByUsername(signupRequestDto.username);
+    const existingUser = await this.findUserByEmail(signupRequestDto.email);
 
     if (existingUser) {
       throw new HttpException(
-        'Username already exists.',
+        'Email already exists.',
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -105,19 +105,19 @@ export class UserService {
 
   // 사용자 로그인
   async login(loginRequestDto: LoginRequestDto): Promise<LoginResponseDto> {
-    const user = await this.findUserByUsername(loginRequestDto.username);
+    const user = await this.findUserByEmail(loginRequestDto.email);
 
     if (!user) {
-      throw new HttpException('Invalid username or password.', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid email or password.', HttpStatus.UNAUTHORIZED);
     }
 
     const isPasswordValid = await bcrypt.compare(loginRequestDto.password, user.password);
     if (!isPasswordValid) {
-      throw new HttpException('Invalid username or password.', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('Invalid email or password.', HttpStatus.UNAUTHORIZED);
     }
 
     // JWT 발급 부분은 필요에 따라 추가
-    const payload = { username: user.username }; 
+    const payload = { email: user.email };
     const token = ''; // JWT 토큰 생성 로직 필요
 
     return new LoginResponseDto('Login successful', token);
