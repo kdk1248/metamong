@@ -47,6 +47,16 @@ export class CollectionController {
     await this.collectionService.deleteCollection(id);
   }
 
+  // 영화 컬렉션에 추가
+  @Post(':collectionId/movies/:movieId')
+  async addMovieToCollection(
+    @Param('collectionId') collectionId: number,
+    @Param('movieId') movieId: number
+  ): Promise<CollectionResponseDto> {
+    const updatedCollection = await this.collectionService.addMovieToCollection(collectionId, movieId);
+    return new CollectionResponseDto(updatedCollection);
+  }
+
   // 컬렉션에서 영화 삭제
   @Delete(':collectionId/movies/:movieId')
   async removeMovieFromCollection(
