@@ -1,5 +1,4 @@
 export class CollectionRequestDto {
-    name: string;
-    movieIds: number[];
-    userIds: number[];
+    id: number;
+    userId: number;
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
-import { CollectionResponseDto } from '../dto/collection-response.dto'; // 수정된 부분
+import { CollectionResponseDto } from '../dto/collection-response.dto';
 import { CollectionService } from '../service/collection.service';
 import { Collection } from '../entity/collection.entity';
 
@@ -27,7 +27,7 @@ export class CollectionController {
     return new CollectionResponseDto(collection); 
   }
 
-  //UPDATE
+  // UPDATE
   @Put(':id')
   async updateCollection(
     @Param('id') id: number,
@@ -37,9 +37,19 @@ export class CollectionController {
     return new CollectionResponseDto(updatedCollection); 
   }
 
-  //DELETE
+  // DELETE
   @Delete(':id')
   async deleteCollection(@Param('id') id: number): Promise<void> {
     await this.collectionService.deleteCollection(id);
+  }
+
+  // 컬렉션에서 영화 삭제
+  @Delete(':collectionId/movies/:movieId')
+  async removeMovieFromCollection(
+    @Param('collectionId') collectionId: number,
+    @Param('movieId') movieId: number
+  ): Promise<CollectionResponseDto> {
+    const updatedCollection = await this.collectionService.removeMovieFromCollection(collectionId, movieId);
+    return new CollectionResponseDto(updatedCollection);
   }
 }
