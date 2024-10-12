@@ -46,4 +46,25 @@ export class CommentController {
   async deleteComment(@Param('id') id: number): Promise<number> {
     return await this.commentService.deleteComment(id);
   }
+
+  // 좋아요 싫어요
+  @Post(':id/favorite')
+  async favoriteCountComment(@Param('id') id: number): Promise<CommentResponseDto> {
+      return this.favoriteCountComment(id); // 기존 좋아요 추가 메서드 호출
+  }
+
+  @Delete(':id/favorite')
+  async unfavoriteCountComment(@Param('id') id: number): Promise<CommentResponseDto> {
+      return this.unfavoriteCountComment(id); // 새로 추가한 좋아요 취소 메서드 호출
+  }
+
+  @Post(':id/dislike')
+  async dislikeCountComment(@Param('id') id: number): Promise<CommentResponseDto> {
+      return this.dislikeCountComment(id); // 기존 싫어요 추가 메서드 호출
+  }
+
+  @Delete(':id/dislike')
+  async undislikeCountComment(@Param('id') id: number): Promise<CommentResponseDto> {
+      return this.undislikeCountComment(id); // 새로 추가한 싫어요 취소 메서드 호출
+  }
 }

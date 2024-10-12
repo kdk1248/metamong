@@ -45,6 +45,8 @@ export class CommentService {
     return id;
   }
 
+
+  // 좋아요
   async favoriteCountComment(commentId: number): Promise<CommentResponseDto> {
     const comment = await this.commentRepository.findById(commentId);
     if (!comment) throw new NotFoundException('Comment not found');
@@ -54,11 +56,34 @@ export class CommentService {
 }
 
 
+// 좋아요 취소
+  async unfavoriteCountComment(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+    
+    comment.favoriteCount = Math.max(comment.favoriteCount - 1, 0);
+    await this.commentRepository.save(comment);
+    
+    return new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.dislikeCount, comment.favoriteCount);
+  }
+
+  // 싫어요
   async dislikeCountComment(commentId: number): Promise<CommentResponseDto> {
     const comment = await this.commentRepository.findById(commentId);
     if (!comment) throw new NotFoundException('Comment not found');
     comment.dislikeCount++;
     await this.commentRepository.save(comment);
     return new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.favoriteCount ,comment.dislikeCount);
+  }
+
+  // 싫어요 취소
+  async undislikeCountComment(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) throw new NotFoundException('Comment not found');
+    
+    comment.dislikeCount = Math.max(comment.dislikeCount - 1, 0);
+    await this.commentRepository.save(comment);
+    
+    return new CommentResponseDto(comment.id, comment.user.username, comment.content, comment.favoriteCount, comment.dislikeCount);
   }
 }
