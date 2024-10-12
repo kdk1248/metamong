@@ -27,7 +27,7 @@ export class Collection extends CommonBigPKEntity {
   @UpdateDateColumn({ type: 'timestamp' })
   modifiedAt: Date;
 
-  @OneToMany(() => Favorite, favorite => favorite.comment)
+  @OneToMany(() => Favorite, favorite => favorite.collection)
   favorite: Favorite[];
 
   @Column({ type: 'bigint', default: 0 })
