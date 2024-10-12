@@ -27,27 +27,19 @@ export class AuthController {
         return new ApiResponse(true, 201, 'User signed up successfully', userResponseDto);
     }
 
-    // 로그인 기능
+      // 로그인 기능
     @Post('/signin')
-    async signIn(@Body() signInRequestDto: SignInRequestDto, @Res() res: Response): Promise<void> {
+    async signIn(@Body() signInRequestDto: SignInRequestDto, @Res() res: Response): Promise<any> {
         this.logger.verbose(`Attempting to sign in user with email: ${signInRequestDto.email}`);
         const { jwtToken, user } = await this.authService.signIn(signInRequestDto);
         const userResponseDto = new UserResponseDto(user);
         this.logger.verbose(`User signed in successfully: ${JSON.stringify(userResponseDto)}`);
-
-        // Send JWT in the response header
+    
+        // JWT 토큰을 헤더에 설정
         res.setHeader('Authorization', `Bearer ${jwtToken}`);
-        res.status(200).json(new ApiResponse(true, 200, 'Sign in successful', { user: userResponseDto }));
-    }
-
-    @Post('/logout')
-    @UseGuards(AuthGuard()) // 인증된 사용자만 접근 가능
-    async logout(@GetUser() user: User, @Res() res: Response): Promise<void> {
-        this.logger.verbose(`User logging out: ${user.email}`);
-        
-        // Simply respond without a token for logout (header cleared client-side)
-        const response = new ApiResponse(true, 200, 'Logout successful', null);
-        res.status(response.statusCode).json(response);
+        this.logger.verbose(`Authorization header set: Bearer ${jwtToken}`);
+    
+        return res.status(200).json(new ApiResponse(true, 200, 'Sign in successful', { user: userResponseDto, token: jwtToken }));
     }
 
     // 인증된 회원이 들어갈 수 있는 테스트 URL 경로
