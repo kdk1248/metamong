@@ -41,12 +41,9 @@ export class AuthService {
         });
 
         const savedUser = await this.usersRepository.save(newUser);
-        
 
         this.logger.verbose(`User signed up successfully with email: ${email}`);
         this.logger.debug(`User details: ${JSON.stringify(savedUser)}`);
-
-        
 
         return savedUser;
     }
@@ -65,6 +62,7 @@ export class AuthService {
             }
             // [1] JWT 토큰 생성 (Secret + Payload)
             const jwtToken = await this.generateJwtToken(existingUser);
+            this.logger.verbose(`JWT token generanated: ${jwtToken}`);
 
             // [2] 사용자 정보 반환
             return { jwtToken, user: existingUser };
@@ -121,6 +119,7 @@ export class AuthService {
             username: kakaoUsername,
             email: kakaoEmail,
             password: hashedPassword, // 해싱된 임시 비밀번호 사용
+            // 기타 필요한 필드 설정
         });
         return this.usersRepository.save(newUser);
     }
@@ -181,11 +180,11 @@ export class AuthService {
             role: user.role
         };
 
-        // JWT 토큰 생성 시 expiresIn 옵션 추가
-        const accessToken = await this.jwtService.sign(payload, { expiresIn: '1h' }); // 1시간 설정
+        const expiresIn = 3600; // 1시간 (초 단위)
+
+        const accessToken = await this.jwtService.sign(payload, { expiresIn }); // 1시간 후 만료
         this.logger.debug(`Generated JWT Token: ${accessToken}`);
         this.logger.debug(`User details: ${JSON.stringify(user)}`);
         return accessToken;
     }
-    
 }
