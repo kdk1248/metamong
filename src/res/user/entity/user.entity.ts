@@ -33,7 +33,7 @@ export class User extends CommonBigPKEntity {
     @OneToMany(() => CommentReply, (commentreply) => commentreply.user)
     replies: CommentReply[];
 
-    @ManyToMany(() => Collection, (collection) => collection.users)
+    @ManyToMany(() => Collection, (collection) => collection.userId)
     @JoinTable()
     collections: Collection[];
 ;

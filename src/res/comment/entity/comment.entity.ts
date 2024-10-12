@@ -25,7 +25,7 @@ export class Comment extends CommonBigPKEntity {
   favorite: Favorite[];
 
   @Column({ default: 0 })
-    favoriteCount: number; 
+  favoriteCount: number; 
 
   @Column({ default: 0 })
   dislikeCount: number;

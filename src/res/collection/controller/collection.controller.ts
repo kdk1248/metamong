@@ -27,7 +27,7 @@ export class CollectionController {
     return new CollectionResponseDto(collection); 
   }
 
-  //UPDATE
+  // UPDATE
   @Put(':id')
   async updateCollection(
     @Param('id') id: number,
@@ -47,6 +47,16 @@ export class CollectionController {
     await this.collectionService.deleteCollection(id);
   }
 
+  // 컬렉션에서 영화 삭제
+  @Delete(':collectionId/movies/:movieId')
+  async removeMovieFromCollection(
+    @Param('collectionId') collectionId: number,
+    @Param('movieId') movieId: number
+  ): Promise<CollectionResponseDto> {
+    const updatedCollection = await this.collectionService.removeMovieFromCollection(collectionId, movieId);
+    return new CollectionResponseDto(updatedCollection);
+   }
+      
   // SEARCH
   @Get('/search')
   async searchCollections(@Query('name') name: string): Promise<CollectionResponseDto[]> {

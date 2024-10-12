@@ -17,9 +17,10 @@ export class CollectionRepository extends Repository<Collection> {
 
   // CREATE
   async createCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {
-    const { name, movieIds, userIds } = collectionRequestDto;
+    const { id, userId } = collectionRequestDto;
     
-    const collection = this.create(collectionRequestDto);
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const collection = this.create({ id, userId: user });
     return this.save(collection);
   }
 
@@ -41,23 +42,17 @@ export class CollectionRepository extends Repository<Collection> {
   }
 
   // UPDATE
-  async updateCollection(id: number, collectionRequestDto: CollectionRequestDto): Promise<Collection> {
-    const { name, movieIds, userIds } = collectionRequestDto;
+  async updateCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {
+    const { id, userId } = collectionRequestDto;
 
     const collection = await this.findOneBy({ id });
     if (!collection) {
       throw new Error(`게시물이 존재하지 않습니다`);
     }
 
-    const movies = await this.movieRepository.find({
-      where: { id: In(movieIds) },
-    });
+    const user = await this.userRepository.findOneBy({ id: userId });
 
-    const users = await this.userRepository.find({
-      where: { id: In(userIds) },
-    });
-
-    this.merge(collection, { name, movies, users });
+    this.merge(collection, { id, userId: user });
     return this.save(collection);
   }
 
