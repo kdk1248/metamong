@@ -15,7 +15,7 @@ import { GetUser } from '../decorator/get-user.decorator';
 export class AuthController {
     private readonly logger = new Logger(AuthController.name);
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService) { }
 
     // 회원 가입 기능
     @Post('/signup')
@@ -27,20 +27,31 @@ export class AuthController {
         return new ApiResponse(true, 201, 'User signed up successfully', userResponseDto);
     }
 
-      // 로그인 기능
+    // 로그인 기능
     @Post('/signin')
     async signIn(@Body() signInRequestDto: SignInRequestDto, @Res() res: Response): Promise<any> {
         this.logger.verbose(`Attempting to sign in user with email: ${signInRequestDto.email}`);
         const { jwtToken, user } = await this.authService.signIn(signInRequestDto);
         const userResponseDto = new UserResponseDto(user);
         this.logger.verbose(`User signed in successfully: ${JSON.stringify(userResponseDto)}`);
-    
+
         // JWT 토큰을 헤더에 설정
         res.setHeader('Authorization', `Bearer ${jwtToken}`);
         this.logger.verbose(`Authorization header set: Bearer ${jwtToken}`);
-    
+
         return res.status(200).json(new ApiResponse(true, 200, 'Sign in successful', { user: userResponseDto, token: jwtToken }));
     }
+    @Post('/logout')
+    async logout(@Res() res: Response): Promise<any> {
+        this.logger.verbose('User logging out');
+
+        // Remove JWT from client
+        res.setHeader('Authorization', '');
+
+        // Send a successful response
+        return res.status(200).json(new ApiResponse(true, 200, 'Logout successful'));
+    }
+
 
     // 인증된 회원이 들어갈 수 있는 테스트 URL 경로
     @Post('/test')
