@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException, Logger } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException, Logger, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
@@ -13,6 +13,10 @@ import { UserRole } from 'src/res/user/enum/user-role.enum';
 
 @Injectable()
 export class AuthService {
+    // 유저 생성 공통 메서드
+    signInWithKakao(kakaoAuthResCode: string): { jwtToken: any; user: any; } | PromiseLike<{ jwtToken: any; user: any; }> {
+        throw new Error('Method not implemented.');
+    }
     private readonly logger = new Logger(AuthService.name);
 
     constructor(
@@ -27,24 +31,13 @@ export class AuthService {
         const { username, password, email } = signUpRequestDto;
         this.logger.verbose(`Attempting to sign up user with email: ${email}`);
 
-        // 이메일 중복 확인
         await this.checkEmailExists(email);
-
-        // 비밀번호 해싱
         const hashedPassword = await this.hashPassword(password);
 
-        const newUser = this.usersRepository.create({
-            username,
-            password: hashedPassword, // 해싱된 비밀번호 사용
-            email,
-            role: UserRole.USER
-        });
-
+        const newUser = this.createUser(username, hashedPassword, email);
         const savedUser = await this.usersRepository.save(newUser);
 
         this.logger.verbose(`User signed up successfully with email: ${email}`);
-        this.logger.debug(`User details: ${JSON.stringify(savedUser)}`);
-
         return savedUser;
     }
 
@@ -53,23 +46,27 @@ export class AuthService {
         const { email, password } = signInRequestDto;
         this.logger.verbose(`Attempting to sign in user with email: ${email}`);
 
-        try {
-            const existingUser = await this.findUserByEmail(email);
-
-            if (!existingUser || !(await bcrypt.compare(password, existingUser.password))) {
-                this.logger.warn(`Failed login attempt for email: ${email}`);
-                throw new UnauthorizedException('Incorrect email or password.');
-            }
-            // [1] JWT 토큰 생성 (Secret + Payload)
-            const jwtToken = await this.generateJwtToken(existingUser);
-            this.logger.verbose(`JWT token generanated: ${jwtToken}`);
-
-            // [2] 사용자 정보 반환
-            return { jwtToken, user: existingUser };
-        } catch (error) {
-            this.logger.error('Signin failed', error.stack);
-            throw error;
+        const existingUser = await this.findUserByEmail(email);
+        if (!existingUser || !(await bcrypt.compare(password, existingUser.password))) {
+            this.logger.warn(`Failed login attempt for email: ${email}`);
+            throw new UnauthorizedException('Incorrect email or password.');
         }
+
+        const jwtToken = await this.generateJwtToken(existingUser);
+        return { jwtToken, user: existingUser };
+    }
+
+    // 카카오 로그인 및 회원 가입 처리
+    async signInOrSignUpWithKakao(kakaoAuthResCode: string): Promise<{ jwtToken: string, user: User }> {
+        const kakaoUserInfo = await this.getKakaoUserInfo(kakaoAuthResCode);
+        let user = await this.findUserByEmail(kakaoUserInfo.email);
+
+        if (!user) {
+            user = await this.signUpWithKakao(kakaoUserInfo);
+        }
+
+        const jwtToken = await this.generateJwtToken(user);
+        return { jwtToken, user };
     }
 
     // 이메일 중복 확인 메서드
@@ -78,10 +75,8 @@ export class AuthService {
 
         const existingUser = await this.findUserByEmail(email);
         if (existingUser) {
-            this.logger.warn(`Email already exists: ${email}`);
             throw new ConflictException('Email already exists');
         }
-        this.logger.verbose(`Email is available: ${email}`);
     }
 
     // 이메일로 유저 찾기 메서드
@@ -89,102 +84,93 @@ export class AuthService {
         return await this.usersRepository.findOne({ where: { email } });
     }
 
+    // 유저 생성 공통 메서드
+    private createUser(username: string, password: string, email: string): User {
+        return this.usersRepository.create({
+            username,
+            password,
+            email,
+            role: UserRole.USER
+        });
+    }
+
     // 비밀번호 해싱 암호화 메서드
     private async hashPassword(password: string): Promise<string> {
         this.logger.verbose(`Hashing password`);
 
-        const salt = await bcrypt.genSalt(); // 솔트 생성
-        return await bcrypt.hash(password, salt); // 비밀번호 해싱
+        const salt = await bcrypt.genSalt();
+        return await bcrypt.hash(password, salt);
     }
 
-    // 카카오 정보 회원 가입
-    async signUpWithKakao(kakaoId: string, profile: any): Promise<User> {
-        const kakaoAccount = profile.kakao_account;
-    
-        const kakaoUsername = kakaoAccount.name;
-        const kakaoEmail = kakaoAccount.email;
-    
-        // 카카오 프로필 데이터를 기반으로 사용자 찾기 또는 생성 로직을 구현
-        const existingUser = await this.usersRepository.findOne({ where: { email: kakaoEmail } });
-        if (existingUser) {
-            return existingUser;
-        }
+    // 카카오 정보로 회원 가입 처리
+    private async signUpWithKakao(kakaoUserInfo: any): Promise<User> {
+        const kakaoUsername = kakaoUserInfo.kakao_account.name;
+        const kakaoEmail = kakaoUserInfo.kakao_account.email;
 
-        // 비밀번호 필드에 랜덤 문자열 생성
-        const temporaryPassword = uuidv4(); // 랜덤 문자열 생성
+        const temporaryPassword = uuidv4(); // 임시 비밀번호 생성
         const hashedPassword = await this.hashPassword(temporaryPassword);
-        
-        // 새 사용자 생성 로직
-        const newUser = this.usersRepository.create({
-            username: kakaoUsername,
-            email: kakaoEmail,
-            password: hashedPassword, // 해싱된 임시 비밀번호 사용
-            // 기타 필요한 필드 설정
-        });
+
+        const newUser = this.createUser(kakaoUsername, hashedPassword, kakaoEmail);
         return this.usersRepository.save(newUser);
     }
 
-    // 카카오 로그인
-    async signInWithKakao(kakaoAuthResCode: string): Promise<{ jwtToken: string, user: User }> {
-        // Authorization Code로 Kakao API에 Access Token 요청
-        const accessToken = await this.getKakaoAccessToken(kakaoAuthResCode);
-
-        // Access Token으로 Kakao 사용자 정보 요청
-        const kakaoUserInfo = await this.getKakaoUserInfo(accessToken);
-
-        // 카카오 사용자 정보를 기반으로 회원가입 또는 로그인 처리
-        const user = await this.signUpWithKakao(kakaoUserInfo.id.toString(), kakaoUserInfo);
-
-        // [1] JWT 토큰 생성 (Secret + Payload)
-        const jwtToken = await this.generateJwtToken(user);
-
-        // [2] 사용자 정보 반환
-        return { jwtToken, user };
-    }
-
     // Kakao Authorization Code로 Access Token 요청
-    async getKakaoAccessToken(code: string): Promise<string> {
+    private async getKakaoAccessToken(code: string): Promise<string> {
         const tokenUrl = 'https://kauth.kakao.com/oauth/token';
         const payload = {
             grant_type: 'authorization_code',
-            client_id: process.env.KAKAO_CLIENT_ID, // Kakao REST API Key
+            client_id: process.env.KAKAO_CLIENT_ID,
             redirect_uri: process.env.KAKAO_REDIRECT_URI,
             code,
-            client_secret: process.env.KAKAO_CLIENT_SECRET // 필요시 사용
+            client_secret: process.env.KAKAO_CLIENT_SECRET
         };
-    
+
         const response = await firstValueFrom(this.httpService.post(tokenUrl, null, {
             params: payload,
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
         }));
-    
-        return response.data.access_token;  // Access Token 반환
+
+        return response.data.access_token;
     }
 
     // Access Token으로 Kakao 사용자 정보 요청
-    async getKakaoUserInfo(accessToken: string): Promise<any> {
+    private async getKakaoUserInfo(kakaoAuthResCode: string): Promise<any> {
+        const accessToken = await this.getKakaoAccessToken(kakaoAuthResCode);
         const userInfoUrl = 'https://kapi.kakao.com/v2/user/me';
         const response = await firstValueFrom(this.httpService.get(userInfoUrl, {
             headers: { Authorization: `Bearer ${accessToken}` }
         }));
-        this.logger.debug(`Kakao User Info: ${JSON.stringify(response.data)}`); // 데이터 확인
         return response.data;
     }
 
     // JWT 생성 공통 메서드
-    async generateJwtToken(user: User): Promise<string> {
-        // [1] JWT 토큰 생성 (Secret + Payload)
-        const payload = { 
-            email: user.email,
-            userId: user.id,
-            role: user.role
-        };
-
-        const expiresIn = 3600; // 1시간 (초 단위)
-
-        const accessToken = await this.jwtService.sign(payload, { expiresIn }); // 1시간 후 만료
-        this.logger.debug(`Generated JWT Token: ${accessToken}`);
-        this.logger.debug(`User details: ${JSON.stringify(user)}`);
-        return accessToken;
+    private async generateJwtToken(user: User): Promise<string> {
+        const payload = { email: user.email, userId: user.id, role: user.role };
+        const expiresIn = 3600; // 1시간
+        return this.jwtService.sign(payload, { expiresIn });
     }
+
+   // 회원 탈퇴 메서드 추가
+async deleteUser(id: string): Promise<void> {
+    this.logger.verbose(`Attempting to delete user with ID: ${id}`);
+
+    const userId = parseInt(id, 10); // id를 number로 변환
+
+    // 유효한 ID인지 체크
+    if (isNaN(userId)) {
+        this.logger.warn(`Invalid user ID: ${id}`);
+        throw new NotFoundException('Invalid user ID');
+    }
+
+    const user = await this.usersRepository.findOne({ where: { id: userId } }); // userId로 변경
+    if (!user) {
+        this.logger.warn(`User not found with ID: ${userId}`);
+        throw new NotFoundException('User not found');
+    }
+
+    await this.usersRepository.remove(user);
+    this.logger.verbose(`User with ID: ${userId} deleted successfully`);
+}
+
+
 }
