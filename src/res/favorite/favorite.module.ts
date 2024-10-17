@@ -27,7 +27,7 @@ import { Comment } from "../comment/entity/comment.entity";
     CommentRepository,
     // FavoriteService는 비즈니스 로직을 처리하고 FavoriteRepository는 데이터베이스 작업을 처리
   ],
-  exports: [FavoriteService], 
+  exports: [FavoriteService, FavoriteRepository], 
   // FavoriteService를 다른 모듈에서 사용할 수 있게 내보냄
 })
 export class FavoriteModule {}
