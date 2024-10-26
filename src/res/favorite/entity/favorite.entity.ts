@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { User } from 'src/res/user/entity/user.entity';
 import { Movie } from 'src/res/movie/entity/movie.entity';
 import { Comment } from 'src/res/comment/entity/comment.entity';
@@ -10,10 +10,12 @@ export class Favorite {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, user => user.favorite)
+  @ManyToOne(() => User)
+  @JoinColumn({name: 'userId'}) 
   user: User;
 
-  @ManyToOne(() => Movie, movie => movie.favorite, { nullable: true })
+  @ManyToOne(() => Movie)
+  @JoinColumn({name: 'movieId'})
   movie?: Movie;
 
   @ManyToOne(() => Comment, comment => comment.favorite, { nullable: true })
