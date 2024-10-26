@@ -1,20 +1,22 @@
-// collection.module.ts
 import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CollectionService } from './service/collection.service';
+import { UserModule } from 'src/res/user/user.module';
+import { MovieModule } from '../movie/movie.module';
 import { CollectionController } from './controller/collection.controller';
 import { Collection } from './entity/collection.entity';
-import { MovieModule } from '../movie/movie.module'; 
-import { UserModule } from 'src/res/user/user.module';
+import { CollectionRepository } from './repository/collection.repository';
+import { CollectionService } from './service/collection.service';
+import { Movie } from '../movie/entity/movie.entity';
+import { User } from '../user/entity/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Collection]),
+    TypeOrmModule.forFeature([Collection, Movie, User]),
     forwardRef(() => MovieModule),
     forwardRef(() => UserModule),
   ],
-  providers: [CollectionService],
+  providers: [CollectionService, CollectionRepository],
   controllers: [CollectionController],
-  exports: [CollectionService],
+  exports: [CollectionService, CollectionRepository],
 })
 export class CollectionModule {}
