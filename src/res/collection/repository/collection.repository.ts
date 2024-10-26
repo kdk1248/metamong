@@ -8,12 +8,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class CollectionRepository extends Repository<Collection> {
-
-  @InjectRepository(Movie)
-  private movieRepository: Repository<Movie>;
-
-  @InjectRepository(User)
-  private userRepository: Repository<User>;
+  constructor(
+    @InjectRepository(Movie)
+    private readonly movieRepository: Repository<Movie>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {
+    super(Collection, movieRepository.manager);
+  }
 
   // CREATE
   async createCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {

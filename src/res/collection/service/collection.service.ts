@@ -1,19 +1,16 @@
-import { BadRequestException, forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { forwardRef, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MovieService } from 'src/res/movie/service/movie.service';
 import { CollectionRequestDto } from '../dto/collection-request.dto';
 import { Collection } from '../entity/collection.entity';
 import { CollectionRepository } from '../repository/collection.repository';
-import { User } from 'src/res/user/entity/user.entity';
-import { UserRepository } from 'src/res/user/repository/user.repository';
 
 @Injectable()
 export class CollectionService {
   constructor(
     @InjectRepository(Collection)
     private readonly collectionRepository: CollectionRepository,
-    @Inject(forwardRef(() => UserRepository))
-    private readonly userRepository: UserRepository,
+    @Inject(forwardRef(() => MovieService))
     private readonly movieService: MovieService,
   ) {}
 
@@ -28,38 +25,40 @@ export class CollectionService {
     return this.collectionRepository.save(collection);
   }
 
-  // 컬렉션에 특정 영화 추가
-  async addMovieToCollection(collectionId: number, movieId: number): Promise<Collection> {
-    const collection = await this.collectionRepository.findOneBy({ id: collectionId });
-    if (!collection) {
-      throw new NotFoundException(`컬렉션이 존재하지 않습니다`);
-    }
+  // // 컬렉션에 특정 영화 추가
+  // async addMovieToCollection(collectionId: number, movieId: number): Promise<Collection> {
+  //   const collection = await this.collectionRepository.findOneBy({ id: collectionId });
+  //   if (!collection) {
+  //     throw new NotFoundException(`컬렉션이 존재하지 않습니다`);
+  //   }
 
-    const movie = await this.movieService.getMovieById(movieId);
+  //   const movie = await this.movieService.getMovieById(movieId);
 
-    collection.movies = [...collection.movies, movie]; // 단일 객체로 추가
-    return this.collectionRepository.save(collection); // 변경 사항 저장
-  }
+  //   collection.movies = [...collection.movies, movie]; // 단일 객체로 추가
+  //   return this.collectionRepository.save(collection); // 변경 사항 저장
+  // }
 
-  // 컬렉션에서 특정 영화 삭제
-  async removeMovieFromCollection(collectionId: number, movieId: number): Promise<Collection> {
-    const collection = await this.collectionRepository.findOneBy({ id: collectionId });
-    if (!collection) {
-      throw new NotFoundException(`컬렉션이 존재하지 않습니다`);
-    }
+  // // 컬렉션에서 특정 영화 삭제
+  // async removeMovieFromCollection(collectionId: number, movieId: number): Promise<Collection> {
+  //   const collection = await this.collectionRepository.findOneBy({ id: collectionId });
+  //   if (!collection) {
+  //     throw new NotFoundException(`컬렉션이 존재하지 않습니다`);
+  //   }
 
-    collection.movies = collection.movies.filter(movie => movie.id !== movieId); // 특정 영화 삭제
-    return this.collectionRepository.save(collection); // 변경 사항 저장
-  }
+  //   collection.movies = collection.movies.filter(movie => movie.id !== movieId); // 특정 영화 삭제
+  //   return this.collectionRepository.save(collection); // 변경 사항 저장
+  // }
 
   // 모든 컬렉션 조회
   async getCollections(): Promise<Collection[]> {
-    return this.collectionRepository.find({
-      order: {
-        modifiedAt: 'DESC',
-      },
+    const collections = await this.collectionRepository.find({
+        order: {
+            modifiedAt: 'DESC',
+        },
     });
-  }
+    console.log('Fetched collections:', collections); // 디버깅용 로그
+    return collections; // collections를 반환
+ }
 
   // 특정 컬렉션 조회
   async getCollectionById(id: number): Promise<Collection> {

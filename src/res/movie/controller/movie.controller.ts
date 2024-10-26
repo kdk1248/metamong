@@ -19,28 +19,27 @@ export class MovieController {
   }
 
   @Get(':id')
- async getMovieById(@Param('id') id: number): Promise<MovieResponseDto> {
-  const movie = await this.movieService.getMovieById(id);
-  return movie;
+  async getMovieById(@Param('id') id: number): Promise<MovieResponseDto> {
+    const movie = await this.movieService.getMovieById(id);
+    return movie;
   }
 
   @Get('filter')
-async filterMovies(
-  @Query('genre') genre?: string,
-  @Query('directorId') directorId?: number,
-  @Query('actor') actor?: string,
-): Promise<MovieResponseDto[]> {
-  return this.movieService.filterMovies({ genre, directorId, actor });
-}
+  async filterMovies(
+    @Query('genre') genre?: string,
+    @Query('directorId') directorId?: number,
+    @Query('actor') actor?: string,
+  ): Promise<MovieResponseDto[]> {
+    return this.movieService.filterMovies({ genre, directorId, actor });
+  }
 
   @Get('paginated')
   async getMoviesPaginated(
-  @Query('page') page: number = 1,
-  @Query('limit') limit: number = 15,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 15,
   ): Promise<MovieResponseDto[]> {
-  return this.movieService.getMoviesPaginated(page, limit);
+    return this.movieService.getMoviesPaginated(page, limit);
   }
-
 
   @Put(':id')
   async updateMovie(@Param('id') id: number, @Body() movieRequestDto: MovieRequestDto): Promise<MovieResponseDto> {
@@ -55,5 +54,23 @@ async filterMovies(
   @Get('search')
   async searchMovies(@Query('title') title: string): Promise<Movie[]> {
     return this.movieService.searchMovies(title);
+  }
+
+  // 영화 컬렉션에 추가
+  @Post(':movieId/collections/:collectionId')
+  async addMovieToCollection(
+    @Param('movieId') movieId: number,
+    @Param('collectionId') collectionId: number
+  ): Promise<void> {
+    return this.movieService.addMovieToCollection(movieId, collectionId);
+  }
+
+  // 영화 컬렉션에서 삭제
+  @Delete(':movieId/collections/:collectionId')
+  async removeMovieFromCollection(
+    @Param('movieId') movieId: number,
+    @Param('collectionId') collectionId: number
+  ): Promise<void> {
+    return this.movieService.removeMovieFromCollection(movieId, collectionId);
   }
 }
