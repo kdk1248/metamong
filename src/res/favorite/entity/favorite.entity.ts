@@ -10,13 +10,16 @@ export class Favorite {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.favorite)
+  @ManyToOne(() => User, (user) => user.favorite, { nullable: true })
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Movie, (movie) => movie.favorite)
+  @ManyToOne(() => Movie, (movie) => movie.favorite, { nullable: true })
   @JoinColumn({ name: 'movieId' })
   movie: Movie;
+
+  // 다른 관계들도 동일하게 설정
+
 
 
   @ManyToOne(() => Comment, comment => comment.favorite, { nullable: true })
