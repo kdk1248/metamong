@@ -76,6 +76,19 @@ export class UserService {
     return await this.userRepository.save(user);
   }
 
+  // 사용자 이메일로 회원정보+좋아요영화들 찾기
+  async findUserWithLikedMoviesByEmail(email: string): Promise<User | undefined> {
+    const userWithFavorites = await this.userRepository
+      .createQueryBuilder('user')  // user 테이블을 기준으로 쿼리 빌드 시작
+      .leftJoinAndSelect('user.favorite', 'favorite')  // user와 favorite 간의 관계를 left join
+      .leftJoinAndSelect('favorite.movie', 'movie')    // favorite과 movie 간의 관계를 left join
+      .where('user.email = :email', { email })         // 이메일로 사용자 필터링
+      .getOne();                                       // 사용자 정보 한 명만 가져옴
+  
+    return userWithFavorites;
+  }
+  
+
   // 사용자 이메일로 찾기
   async findUserByEmail(email: string): Promise<User | undefined> {
     return await this.userRepository.findOne({ where: { email } });

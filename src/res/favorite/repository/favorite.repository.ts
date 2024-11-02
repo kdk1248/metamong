@@ -56,20 +56,26 @@ export class FavoriteRepository {
   }
 
   async findByUserAndTarget(userId: number, movieId?: number, commentId?: number, collectionId?: number): Promise<Favorite | null> {
-    return await this.favoriteRepository.findOne({
-      where: {
-        user: { id: userId },
-        ...(movieId && { movie: { id: movieId } }),
-        ...(commentId && { comment: { id: commentId } }),
-        ...(collectionId && { collection: { id: collectionId } }),
-      },
-    });
+    const query = this.favoriteRepository.createQueryBuilder('favorite')
+      .where('favorite.userId = :userId', { userId });
+  
+    if (movieId) {
+      query.andWhere('favorite.movieId = :movieId', { movieId });
+    }
+    if (commentId) {
+      query.andWhere('favorite.commentId = :commentId', { commentId });
+    }
+    if (collectionId) {
+      query.andWhere('favorite.collectionId = :collectionId', { collectionId });
+    }
+  
+    return await query.getOne();
   }
 
   async findAllByUser(userId: number): Promise<Favorite[]> {
     return await this.favoriteRepository.find({
       where: { user: { id: userId } },
-      relations: ['movie', 'comment', 'collection'],
+      relations: ['user','movie', 'comment', 'collection'],
     });
   }
 

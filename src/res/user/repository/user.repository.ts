@@ -34,4 +34,16 @@ export class UserRepository {
     async findAll(): Promise<User[]> {
         return await this.userRepository.find();
     }
+    async findUserWithLikedMoviesByEmail(email: string): Promise<User | undefined> {
+        console.log(`Finding user with email: ${email}`);
+        const userWithFavorites = await this.userRepository
+          .createQueryBuilder('user')
+          .leftJoinAndSelect('user.favorite', 'favorite')
+          .leftJoinAndSelect('favorite.movie', 'movie')
+          .where('user.email = :email', { email })
+          .getOne();
+        console.log(`Result: ${JSON.stringify(userWithFavorites)}`);
+        return userWithFavorites;
+      }
+      
 }

@@ -6,6 +6,7 @@ import { LoginRequestDto, SignupRequestDto } from '../dto/user-request.dto';
 import { LoginResponseDto } from '../dto/user-response.dto';
 import { User } from '../entity/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { UserWithLikedMoviesResponseDto } from '../dto/user-with-liked-movies-response.dto';
 
 @Controller('api/user')
 export class UserController {
@@ -64,5 +65,20 @@ export class UserController {
             username: user.username,
             email: user.email,
         };
+    }
+
+    @Get('mylikedmovie/:email') // email을 URL 파라미터로 받음
+    async getUserWithLikedMovieByEmail(
+      @Param('email') email: string
+    ): Promise<UserWithLikedMoviesResponseDto | HttpException> {
+      // 이메일로 사용자 정보와 좋아요한 영화들 조회
+      const user = await this.userService.findUserWithLikedMoviesByEmail(email);
+    
+      if (!user) {
+        throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+      }
+    
+      // UserWithFavoritesResponseDto로 응답 반환
+      return new UserWithLikedMoviesResponseDto(user);
     }
 }

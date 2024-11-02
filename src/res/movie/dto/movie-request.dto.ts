@@ -6,7 +6,6 @@ export class MovieRequestDto {
   posterUrl: string;
   stillUrl: string;
   runningTime: number;
-  favorite: number;
 
   // KMDb
   nation: string;

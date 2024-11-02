@@ -10,13 +10,14 @@ export class Favorite {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn({name: 'userId'}) 
+  @ManyToOne(() => User, (user) => user.favorite)
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Movie)
-  @JoinColumn({name: 'movieId'})
-  movie?: Movie;
+  @ManyToOne(() => Movie, (movie) => movie.favorite)
+  @JoinColumn({ name: 'movieId' })
+  movie: Movie;
+
 
   @ManyToOne(() => Comment, comment => comment.favorite, { nullable: true })
   comment?: Comment;

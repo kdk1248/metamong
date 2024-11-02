@@ -1,8 +1,9 @@
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { MovieRequestDto } from '../dto/movie-request.dto';
 import { Collection } from 'src/res/collection/entity/collection.entity';
 import { forwardRef } from '@nestjs/common';
+import { Favorite } from 'src/res/favorite/entity/favorite.entity';
 
 
 @Entity()
@@ -29,23 +30,20 @@ export class Movie extends CommonBigPKEntity {
   stillUrl: string;
 
   @Column({ type: 'int' })
-  favorite: number;
-
-  @Column({ type: 'int' })
   runningTime: number;
 
   // KMDb
   @Column({ type: 'varchar', length: 100 })
-  nation: string; 
+  nation: string;
 
   @Column({ type: 'varchar', length: 255 })
-  company: string; 
+  company: string;
 
   @Column({ type: 'boolean' })
-  ratedYn: boolean; 
+  ratedYn: boolean;
 
   @Column({ type: 'varchar', length: 50 })
-  type: string; 
+  type: string;
 
   @Column({ type: 'varchar', length: 255 })
   actor: string;
@@ -58,6 +56,9 @@ export class Movie extends CommonBigPKEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   modifiedAt: Date;
+  // Movie 엔티티에 추가
+  @OneToMany(() => Favorite, (favorite) => favorite.movie, { eager: false })
+  favorite: Favorite[];
 
   @ManyToMany(() => Collection, (collection) => collection.movies)
   @JoinTable()
@@ -71,7 +72,6 @@ export class Movie extends CommonBigPKEntity {
       this.genre = movieRequestDto.genre;
       this.contents = movieRequestDto.contents;
       this.posterUrl = movieRequestDto.posterUrl;
-      this.favorite = movieRequestDto.favorite;
       this.runningTime = movieRequestDto.runningTime;
     }
   }
@@ -82,7 +82,6 @@ export class Movie extends CommonBigPKEntity {
     this.genre = movieRequestDto.genre;
     this.contents = movieRequestDto.contents;
     this.posterUrl = movieRequestDto.posterUrl;
-    this.favorite = movieRequestDto.favorite;
     this.runningTime = movieRequestDto.runningTime;
   }
 }
