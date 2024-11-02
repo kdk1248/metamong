@@ -80,17 +80,22 @@ export class AuthController {
     }
 
     // 사용자 삭제
-    @Delete('users/:id/delete') // @Post를 @Delete로 변경
-    async deleteUser(@Param('id') id: string, @Res() res: Response): Promise<any> {
-        this.logger.verbose(`Attempting to delete user with ID: ${id}`);
-
-        try {
-            await this.authService.deleteUser(id); // 성공 시 아무런 값을 반환하지 않음
-            this.logger.verbose(`User with ID ${id} deleted successfully`);
-            return res.status(200).json(new ApiResponse(true, 200, `User with ID ${id} deleted successfully`));
-        } catch (error) {
-            this.logger.error(`Failed to delete user with ID: ${id}`, error.stack);
+    @Delete('users/:id/delete')
+    @UseGuards(AuthGuard()) // 인증이 필요하다는 걸 명시
+async deleteUser(@Param('id') id: string, @Res() res: Response): Promise<any> {
+    this.logger.verbose(`Attempting to delete user with ID: ${id}`);
+    try {
+        const user = await this.authService.findUserById(id); // ID로 사용자 찾기
+        if (!user) {
             return res.status(404).json(new ApiResponse(false, 404, `User with ID ${id} not found`));
         }
+        
+        await this.authService.deleteUser(id); // 사용자 삭제
+        this.logger.verbose(`User with ID ${id} deleted successfully`);
+        return res.status(200).json(new ApiResponse(true, 200, `User with ID ${id} deleted successfully`));
+    } catch (error) {
+        this.logger.error(`Failed to delete user with ID: ${id}`, error.stack);
+        return res.status(500).json(new ApiResponse(false, 500, 'Internal server error'));
     }
+}
 }
