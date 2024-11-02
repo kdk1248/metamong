@@ -10,13 +10,10 @@ import { SignInRequestDto } from '../dto/sign-in-request.dto';
 import { SignUpRequestDto } from '../dto/sign-up-request.dto';
 import { User } from 'src/res/user/entity/user.entity';
 import { UserRole } from 'src/res/user/enum/user-role.enum';
+import { UserRepository } from 'src/res/user/repository/user.repository'; // 가정: UserRepository를 사용하여 DB 접근
 
 @Injectable()
 export class AuthService {
-    // 유저 생성 공통 메서드
-    signInWithKakao(kakaoAuthResCode: string): { jwtToken: any; user: any; } | PromiseLike<{ jwtToken: any; user: any; }> {
-        throw new Error('Method not implemented.');
-    }
     private readonly logger = new Logger(AuthService.name);
 
     constructor(
@@ -25,6 +22,11 @@ export class AuthService {
         private jwtService: JwtService,
         private httpService: HttpService
     ) {}
+
+    // 유저 생성 공통 메서드
+    signInWithKakao(kakaoAuthResCode: string): { jwtToken: any; user: any; } | PromiseLike<{ jwtToken: any; user: any; }> {
+        throw new Error('Method not implemented.');
+    }
 
     // 회원 가입
     async signUp(signUpRequestDto: SignUpRequestDto): Promise<User> {
@@ -150,27 +152,39 @@ export class AuthService {
         return this.jwtService.sign(payload, { expiresIn });
     }
 
-   // 회원 탈퇴 메서드 추가
-async deleteUser(id: string): Promise<void> {
-    this.logger.verbose(`Attempting to delete user with ID: ${id}`);
+    // 회원 탈퇴 메서드 추가
+    async deleteUser(id: string): Promise<void> {
+        this.logger.verbose(`Attempting to delete user with ID: ${id}`);
 
-    const userId = parseInt(id, 10); // id를 number로 변환
+        const userId = parseInt(id, 10); // id를 number로 변환
 
-    // 유효한 ID인지 체크
+        // 유효한 ID인지 체크
+        if (isNaN(userId)) {
+            this.logger.warn(`Invalid user ID: ${id}`);
+            throw new NotFoundException('Invalid user ID');
+        }
+
+        const user = await this.usersRepository.findOne({ where: { id: userId } }); // userId로 변경
+        if (!user) {
+            this.logger.warn(`User not found with ID: ${userId}`);
+            throw new NotFoundException('User not found');
+        }
+
+        await this.usersRepository.remove(user);
+        this.logger.verbose(`User with ID: ${userId} deleted successfully`);
+    }
+
+    // 사용자 ID로 사용자 찾기
+async findUserById(id: string): Promise<User> {
+    const userId = parseInt(id, 10); // ID를 number로 변환
     if (isNaN(userId)) {
-        this.logger.warn(`Invalid user ID: ${id}`);
-        throw new NotFoundException('Invalid user ID');
+        throw new NotFoundException(`Invalid user ID`);
     }
 
-    const user = await this.usersRepository.findOne({ where: { id: userId } }); // userId로 변경
+    const user = await this.usersRepository.findOne({ where: { id: userId } }); // userId 사용
     if (!user) {
-        this.logger.warn(`User not found with ID: ${userId}`);
-        throw new NotFoundException('User not found');
+        throw new NotFoundException(`User with ID ${userId} not found`);
     }
-
-    await this.usersRepository.remove(user);
-    this.logger.verbose(`User with ID: ${userId} deleted successfully`);
+    return user;
 }
-
-
 }
