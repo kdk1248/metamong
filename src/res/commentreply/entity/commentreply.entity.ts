@@ -16,9 +16,9 @@ export class CommentReply extends CommonBigPKEntity {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @ManyToOne(() => Comment, (comment) => comment.replies, {
-    onDelete: 'CASCADE',
-  })
+  // @ManyToOne(() => Comment, (comment) => comment.replies, {
+  //   onDelete: 'CASCADE',
+  // })
   @JoinColumn({ name: 'commentId' })
   comment: Comment;
 

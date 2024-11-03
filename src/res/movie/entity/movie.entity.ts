@@ -1,10 +1,9 @@
 import { CommonBigPKEntity } from 'src/res/common/entity/common.entity';
 import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { MovieRequestDto } from '../dto/movie-request.dto';
 import { Collection } from 'src/res/collection/entity/collection.entity';
-import { forwardRef } from '@nestjs/common';
 import { Favorite } from 'src/res/favorite/entity/favorite.entity';
-
+import { Comment } from 'src/res/comment/entity/comment.entity';
+import { MovieRequestDto } from '../dto/movie-request.dto';
 
 @Entity()
 export class Movie extends CommonBigPKEntity {
@@ -32,7 +31,6 @@ export class Movie extends CommonBigPKEntity {
   @Column({ type: 'int' })
   runningTime: number;
 
-  // KMDb
   @Column({ type: 'varchar', length: 100 })
   nation: string;
 
@@ -56,13 +54,16 @@ export class Movie extends CommonBigPKEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   modifiedAt: Date;
-  // Movie 엔티티에 추가
+
   @OneToMany(() => Favorite, (favorite) => favorite.movie, { eager: false })
   favorite: Favorite[];
 
   @ManyToMany(() => Collection, (collection) => collection.movies)
   @JoinTable()
   collections: Collection[];
+
+  @OneToMany(() => Comment, (comment) => comment.movie, { eager: false })
+  comments: Comment[]; // Comment와의 관계 설정
 
   constructor(movieRequestDto: MovieRequestDto) {
     super();
