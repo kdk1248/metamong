@@ -13,8 +13,7 @@ export class CollectionResponseDto {
         this.id = collection.id;
         this.name = collection.name;
         this.favoriteCount = collection.favoriteCount;
-        this.movies = collection.movies.map(movie => new MovieResponseDto(movie));
-        this.createdAt = collection.createdAt;
+        this.movies = collection.movies ? collection.movies.map(movie => new MovieResponseDto(movie)) : [];        this.createdAt = collection.createdAt;
         this.modifiedAt = collection.modifiedAt;
     }
 }
