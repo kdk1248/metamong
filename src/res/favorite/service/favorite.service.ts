@@ -27,7 +27,7 @@ export class FavoriteService {
         favorite.movie ? favorite.movie.id : null,
         favorite.movie ? favorite.movie.title : '제목 없음',
         favorite.comment ? favorite.comment.id : null,
-        favorite.comment ? favorite.comment.content : '',
+        favorite.comment ? favorite.comment.commentContent : '',
         favorite.collection ? favorite.collection.id : null,
         favorite.collection ? favorite.collection.name : ''
       );
@@ -73,7 +73,7 @@ export class FavoriteService {
       movie ? movie.id : null,
       movie ? movie.title : '',
       comment ? comment.id : null,
-      comment ? comment.content : '',
+      comment ? comment.commentContent : '',
       collection ? collection.id : null,
       collection ? collection.name : '',
     );

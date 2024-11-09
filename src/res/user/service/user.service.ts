@@ -16,6 +16,9 @@ export class UserService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) { }
+  async findUserById(id: number): Promise<User | undefined> {
+    return await this.userRepository.findOne({ where: { id } });
+}
 
   // 사용자 이메일로 조회
   async findOneByEmail(email: string): Promise<User> {

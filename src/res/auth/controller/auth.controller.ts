@@ -59,7 +59,24 @@ export class AuthController {
         const userResponseDto = new UserResponseDto(user);
         return new ApiResponse(true, 200, 'You are authenticated', userResponseDto);
     }
+    @Get('/users/:id')
+    @UseGuards(AuthGuard()) // 인증이 필요함을 명시
+    async getUserInfo(@Param('id') id: string, @Res() res: Response): Promise<any> {
+        this.logger.verbose(`Fetching user info for ID: ${id}`);
+        try {
+            const user = await this.authService.findUserById(id); // ID로 사용자 찾기
+            if (!user) {
+                return res.status(404).json(new ApiResponse(false, 404, `User with ID ${id} not found`));
+            }
 
+            const userResponseDto = new UserResponseDto(user);
+            this.logger.verbose(`User info retrieved successfully: ${JSON.stringify(userResponseDto)}`);
+            return res.status(200).json(new ApiResponse(true, 200, 'User info retrieved successfully', userResponseDto));
+        } catch (error) {
+            this.logger.error(`Failed to fetch user info for ID: ${id}`, error.stack);
+            return res.status(500).json(new ApiResponse(false, 500, 'Internal server error'));
+        }
+    }
     // 카카오 로그인 페이지 요청
     @Get('/kakao')
     @UseGuards(AuthGuard('kakao'))
@@ -82,20 +99,20 @@ export class AuthController {
     // 사용자 삭제
     @Delete('users/:id/delete')
     @UseGuards(AuthGuard()) // 인증이 필요하다는 걸 명시
-async deleteUser(@Param('id') id: string, @Res() res: Response): Promise<any> {
-    this.logger.verbose(`Attempting to delete user with ID: ${id}`);
-    try {
-        const user = await this.authService.findUserById(id); // ID로 사용자 찾기
-        if (!user) {
-            return res.status(404).json(new ApiResponse(false, 404, `User with ID ${id} not found`));
+    async deleteUser(@Param('id') id: string, @Res() res: Response): Promise<any> {
+        this.logger.verbose(`Attempting to delete user with ID: ${id}`);
+        try {
+            const user = await this.authService.findUserById(id); // ID로 사용자 찾기
+            if (!user) {
+                return res.status(404).json(new ApiResponse(false, 404, `User with ID ${id} not found`));
+            }
+
+            await this.authService.deleteUser(id); // 사용자 삭제
+            this.logger.verbose(`User with ID ${id} deleted successfully`);
+            return res.status(200).json(new ApiResponse(true, 200, `User with ID ${id} deleted successfully`));
+        } catch (error) {
+            this.logger.error(`Failed to delete user with ID: ${id}`, error.stack);
+            return res.status(500).json(new ApiResponse(false, 500, 'Internal server error'));
         }
-        
-        await this.authService.deleteUser(id); // 사용자 삭제
-        this.logger.verbose(`User with ID ${id} deleted successfully`);
-        return res.status(200).json(new ApiResponse(true, 200, `User with ID ${id} deleted successfully`));
-    } catch (error) {
-        this.logger.error(`Failed to delete user with ID: ${id}`, error.stack);
-        return res.status(500).json(new ApiResponse(false, 500, 'Internal server error'));
     }
-}
 }

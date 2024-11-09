@@ -21,7 +21,7 @@ export class UserWithLikedMoviesResponseDto {
       favorite.movie?.id ?? null,  // null 처리를 명확하게
       favorite.movie?.title ?? null,
       favorite.comment?.id ?? null,
-      favorite.comment?.content ?? null,
+      favorite.comment?.commentContent ?? null,
       favorite.collection?.id ?? null,
       favorite.collection?.name ?? null
     ));

@@ -63,7 +63,7 @@ export class Movie extends CommonBigPKEntity {
   collections: Collection[];
 
   @OneToMany(() => Comment, (comment) => comment.movie, { eager: false })
-  comments: Comment[]; // Comment와의 관계 설정
+  comments: Comment[]; 
 
   constructor(movieRequestDto: MovieRequestDto) {
     super();

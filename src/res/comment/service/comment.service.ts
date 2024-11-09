@@ -1,199 +1,116 @@
 import { Injectable, InternalServerErrorException, NotFoundException, Logger } from '@nestjs/common';
 import { CommentRequestDto } from '../dto/comment-request.dto';
-import { CommentResponseDto } from '../dto/comment-response.dto';
+import { CommentResponseDto, ShowCommentByIdResponseDto, ShowCommentsResponseDto } from '../dto/comment-response.dto';
 import { CommentRepository } from '../repository/comment.repository';
 import { Comment } from '../entity/comment.entity';
-import { FavoriteRequestDto } from 'src/res/favorite/dto/favorite-request.dto';
-import { FavoriteResponseDto } from 'src/res/favorite/dto/favorite-response.dto';
-import { FavoriteRepository } from 'src/res/favorite/repository/favorite.repository';
-import { Inject } from '@nestjs/common';
+import { User } from 'src/res/user/entity/user.entity';
+import { Movie } from 'src/res/movie/entity/movie.entity';
 
 @Injectable()
 export class CommentService {
   private readonly logger = new Logger(CommentService.name);
 
-  constructor(
-    @Inject(CommentRepository) private readonly commentRepository: CommentRepository,
-    @Inject(FavoriteRepository) private readonly favoriteRepository: FavoriteRepository,
-  ) {}
+  constructor(private readonly commentRepository: CommentRepository) {}
 
   async createComment(commentRequestDto: CommentRequestDto): Promise<CommentResponseDto> {
-    this.logger.verbose(`Creating a new comment: ${JSON.stringify(commentRequestDto)}`);
     try {
-      const comment = new Comment(commentRequestDto);
+      const comment = new Comment();
+      comment.user = { id: commentRequestDto.userId } as User;
+      comment.movie = { id: commentRequestDto.movieId } as Movie;
+      comment.commentContent = commentRequestDto.commentContent;
+      
+      console.log('Saving comment:', comment); // 저장 전 로그 출력
       const savedComment = await this.commentRepository.save(comment);
-      this.logger.verbose(`Comment created with ID: ${savedComment.id}`);
-      return new CommentResponseDto(
-        savedComment.id,
-        savedComment.user ? savedComment.user.id : null,
-        savedComment.content,
-        savedComment.favoriteCount,
-        savedComment.dislikeCount
-      );
+      
+      return new CommentResponseDto(savedComment.id, true, 'Comment added successfully.');
     } catch (error) {
-      this.logger.error('Error creating comment', error.stack);
-      throw new InternalServerErrorException('Failed to create the comment');
+      this.logger.error('Failed to create the comment', error.stack);
+      throw new InternalServerErrorException('Failed to save the comment');
     }
   }
-
-  async getComments(page: number, limit: number): Promise<CommentResponseDto[]> {
-    this.logger.verbose(`Fetching comments for page: ${page}, limit: ${limit}`);
+  async getCommentsByMovieId(movieId: number): Promise<Comment[]> {
+    return this.commentRepository.find({
+      where: { movie: { id: movieId } }, // 수정된 부분: movie 객체 내의 id로 조건 설정
+      relations: ['user', 'movie'] // 필요한 경우 관계 로딩 설정
+    });
+  }
+  async getComments(page: number, limit: number): Promise<ShowCommentsResponseDto[]> {
     try {
       return await this.commentRepository.getComments(page, limit);
     } catch (error) {
-      this.logger.error('Error fetching comments', error.stack);
+      this.logger.error('Failed to fetch comments', error.stack);
       throw new InternalServerErrorException('Failed to fetch comments');
     }
   }
 
-  async getCommentById(id: number): Promise<CommentResponseDto> {
-    this.logger.verbose(`Fetching comment with ID: ${id}`);
-    try {
-      const comment = await this.commentRepository.findById(id);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${id} not found`);
-        throw new NotFoundException(`Comment with ID ${id} not found`);
-      }
-
-      const userId = comment.user ? comment.user.id : null;
-      this.logger.verbose(`Comment with ID ${id} fetched successfully`);
-      return new CommentResponseDto(
-        comment.id,
-        userId,
-        comment.content,
-        comment.favoriteCount,
-        comment.dislikeCount
-      );
-    } catch (error) {
-      this.logger.error(`Error fetching comment with ID ${id}:`, error.stack);
-      throw new InternalServerErrorException('An error occurred while fetching the comment');
+  async getCommentById(id: number): Promise<ShowCommentByIdResponseDto> {
+    const comment = await this.commentRepository.findById(id);
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${id} not found`);
     }
+
+    return new ShowCommentByIdResponseDto(
+      comment.user.id,
+      comment.createdAt,
+      comment.commentContent,
+      comment.favoriteCount,
+      comment.dislikeCount,
+      comment.movie?.id,
+      comment.movie?.title
+    );
   }
 
-  async updateComment(id: number, commentRequestDto: CommentRequestDto): Promise<number> {
-    this.logger.verbose(`Updating comment with ID: ${id}`);
-    try {
-      const comment = await this.commentRepository.findById(id);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${id} not found`);
-        throw new NotFoundException(`Comment with ID ${id} not found`);
-      }
-      comment.update(commentRequestDto);
-      await this.commentRepository.save(comment);
-      this.logger.verbose(`Comment with ID ${id} updated successfully`);
-      return id;
-    } catch (error) {
-      this.logger.error(`Error updating comment with ID ${id}:`, error.stack);
-      throw new InternalServerErrorException('Failed to update the comment');
-    }
+  async updateComment(id: number, commentRequestDto: CommentRequestDto): Promise<CommentResponseDto> {
+    await this.commentRepository.update(id, commentRequestDto);
+    return new CommentResponseDto(id, true, 'Comment updated successfully.');
   }
 
-  async deleteComment(id: number): Promise<number> {
-    this.logger.verbose(`Deleting comment with ID: ${id}`);
-    try {
-      const comment = await this.commentRepository.findById(id);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${id} not found`);
-        throw new NotFoundException(`Comment with ID ${id} not found`);
-      }
-      await this.commentRepository.delete(id);
-      this.logger.verbose(`Comment with ID ${id} deleted successfully`);
-      return id;
-    } catch (error) {
-      this.logger.error(`Error deleting comment with ID ${id}:`, error.stack);
-      throw new InternalServerErrorException('Failed to delete the comment');
-    }
+  async deleteComment(id: number): Promise<CommentResponseDto> {
+    await this.commentRepository.delete(id);
+    return new CommentResponseDto(id, true, 'Comment deleted successfully.');
   }
 
-  async favoriteCountComment(commentId: number): Promise<CommentResponseDto> {
-    this.logger.verbose(`Incrementing favorite count for comment with ID: ${commentId}`);
-    try {
-      const comment = await this.commentRepository.findById(commentId);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${commentId} not found`);
-        throw new NotFoundException('Comment not found');
-      }
-      comment.favoriteCount++;
-      await this.commentRepository.save(comment);
-      return new CommentResponseDto(
-        comment.id,
-        comment.user ? comment.user.id : null,
-        comment.content,
-        comment.favoriteCount,
-        comment.dislikeCount
-      );
-    } catch (error) {
-      this.logger.error(`Error incrementing favorite count for comment ID ${commentId}:`, error.stack);
-      throw new InternalServerErrorException('Failed to increment favorite count');
+  async incrementFavoriteCount(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${commentId} not found`);
     }
+
+    comment.favoriteCount += 1;
+    await this.commentRepository.save(comment);
+    return new CommentResponseDto(comment.id, true, 'Favorite count incremented successfully.');
   }
 
-  async unfavoriteCountComment(commentId: number): Promise<CommentResponseDto> {
-    this.logger.verbose(`Decrementing favorite count for comment with ID: ${commentId}`);
-    try {
-      const comment = await this.commentRepository.findById(commentId);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${commentId} not found`);
-        throw new NotFoundException('Comment not found');
-      }
-      comment.favoriteCount = Math.max(comment.favoriteCount - 1, 0);
-      await this.commentRepository.save(comment);
-      return new CommentResponseDto(
-        comment.id,
-        comment.user ? comment.user.id : null,
-        comment.content,
-        comment.favoriteCount,
-        comment.dislikeCount
-      );
-    } catch (error) {
-      this.logger.error(`Error decrementing favorite count for comment ID ${commentId}:`, error.stack);
-      throw new InternalServerErrorException('Failed to decrement favorite count');
+  async decrementFavoriteCount(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${commentId} not found`);
     }
+
+    comment.favoriteCount = Math.max(comment.favoriteCount - 1, 0);
+    await this.commentRepository.save(comment);
+    return new CommentResponseDto(comment.id, true, 'Favorite count decremented successfully.');
   }
 
-  async dislikeCountComment(commentId: number): Promise<CommentResponseDto> {
-    this.logger.verbose(`Incrementing dislike count for comment with ID: ${commentId}`);
-    try {
-      const comment = await this.commentRepository.findById(commentId);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${commentId} not found`);
-        throw new NotFoundException('Comment not found');
-      }
-      comment.dislikeCount++;
-      await this.commentRepository.save(comment);
-      return new CommentResponseDto(
-        comment.id,
-        comment.user ? comment.user.id : null,
-        comment.content,
-        comment.favoriteCount,
-        comment.dislikeCount
-      );
-    } catch (error) {
-      this.logger.error(`Error incrementing dislike count for comment ID ${commentId}:`, error.stack);
-      throw new InternalServerErrorException('Failed to increment dislike count');
+  async incrementDislikeCount(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${commentId} not found`);
     }
+
+    comment.dislikeCount += 1;
+    await this.commentRepository.save(comment);
+    return new CommentResponseDto(comment.id, true, 'Dislike count incremented successfully.');
   }
 
-  async undislikeCountComment(commentId: number): Promise<CommentResponseDto> {
-    this.logger.verbose(`Decrementing dislike count for comment with ID: ${commentId}`);
-    try {
-      const comment = await this.commentRepository.findById(commentId);
-      if (!comment) {
-        this.logger.warn(`Comment with ID ${commentId} not found`);
-        throw new NotFoundException('Comment not found');
-      }
-      comment.dislikeCount = Math.max(comment.dislikeCount - 1, 0);
-      await this.commentRepository.save(comment);
-      return new CommentResponseDto(
-        comment.id,
-        comment.user ? comment.user.id : null,
-        comment.content,
-        comment.favoriteCount,
-        comment.dislikeCount
-      );
-    } catch (error) {
-      this.logger.error(`Error decrementing dislike count for comment ID ${commentId}:`, error.stack);
-      throw new InternalServerErrorException('Failed to decrement dislike count');
+  async decrementDislikeCount(commentId: number): Promise<CommentResponseDto> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new NotFoundException(`Comment with ID ${commentId} not found`);
     }
+
+    comment.dislikeCount = Math.max(comment.dislikeCount - 1, 0);
+    await this.commentRepository.save(comment);
+    return new CommentResponseDto(comment.id, true, 'Dislike count decremented successfully.');
   }
 }

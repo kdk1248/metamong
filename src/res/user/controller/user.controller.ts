@@ -13,7 +13,7 @@ export class UserController {
     constructor(
         private readonly userService: UserService,
         private readonly jwtService: JwtService
-    ) {}
+    ) { }
 
     @UseGuards(AuthGuard('jwt')) // JWT 인증 가드 사용
     @Get('me')
@@ -59,7 +59,7 @@ export class UserController {
         if (!user) {
             throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
         }
-        
+
         // username과 email만 반환
         return {
             username: user.username,
@@ -69,16 +69,28 @@ export class UserController {
 
     @Get('mylikedmovie/:email') // email을 URL 파라미터로 받음
     async getUserWithLikedMovieByEmail(
-      @Param('email') email: string
+        @Param('email') email: string
     ): Promise<UserWithLikedMoviesResponseDto | HttpException> {
-      // 이메일로 사용자 정보와 좋아요한 영화들 조회
-      const user = await this.userService.findUserWithLikedMoviesByEmail(email);
-    
-      if (!user) {
-        throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
-      }
-    
-      // UserWithFavoritesResponseDto로 응답 반환
-      return new UserWithLikedMoviesResponseDto(user);
+        // 이메일로 사용자 정보와 좋아요한 영화들 조회
+        const user = await this.userService.findUserWithLikedMoviesByEmail(email);
+
+        if (!user) {
+            throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+        }
+
+        // UserWithFavoritesResponseDto로 응답 반환
+        return new UserWithLikedMoviesResponseDto(user);
+    }
+    @Get(':id') // ID로 사용자 정보 가져오기
+    async getUserById(@Param('id') id: number): Promise<{ username: string; email: string } | HttpException> {
+        const user = await this.userService.findUserById(id);
+        if (!user) {
+            throw new HttpException('User not found.', HttpStatus.NOT_FOUND);
+        }
+
+        return {
+            username: user.username,
+            email: user.email,
+        };
     }
 }

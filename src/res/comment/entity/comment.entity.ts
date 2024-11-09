@@ -23,7 +23,7 @@ export class Comment extends CommonBigPKEntity {
   favorite: Favorite[];
 
   @Column('text', { unique: false, nullable: false })
-  content: string;
+  commentContent: string;
 
   @Column({ default: 0 })
   favoriteCount: number;
@@ -40,13 +40,13 @@ export class Comment extends CommonBigPKEntity {
     if (commentRequestDto) {
       this.user = { id: commentRequestDto.userId } as User;
       this.movie = { id: commentRequestDto.movieId } as Movie; // Movie 속성 설정
-      this.content = commentRequestDto.content;
+      this.commentContent = commentRequestDto.commentContent;
       this.createdAt = new Date();
     }
   }
 
   update(commentRequestDto: CommentRequestDto): void {
-    this.content = commentRequestDto.content;
+    this.commentContent = commentRequestDto.commentContent;
     this.movie = { id: commentRequestDto.movieId } as Movie;
   }
 }
