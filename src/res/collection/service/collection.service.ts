@@ -36,8 +36,14 @@ export class CollectionService {
     }
 
     const movie = await this.movieService.getMovieById(movieId);
+    if (!movie) {
+      throw new NotFoundException(`영화가 존재하지 않습니다`); // 영화가 없을 때 예외 처리
+    }
 
-    collection.movies = [...collection.movies, movie]; // 단일 객체로 추가
+    collection.movies = collection.movies || [];
+
+    collection.movies.push(movie); // 배열에 추가
+
     return this.collectionRepository.save(collection); // 변경 사항 저장
   }
 
