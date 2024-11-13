@@ -59,22 +59,27 @@ export class CollectionService {
   }
 
   // 모든 컬렉션 조회
-  async getCollections(): Promise<Collection[]> {
-    return this.collectionRepository.find({
-      order: {
-        modifiedAt: 'DESC',
-      },
-    });
-  }
+async getCollections(): Promise<Collection[]> {
+  return this.collectionRepository.find({
+    relations: ['movies'],
+    order: {
+      modifiedAt: 'DESC',
+    },
+  });
+}
 
-  // 특정 컬렉션 조회
-  async getCollectionById(id: number): Promise<Collection> {
-    const collection = await this.collectionRepository.findOneBy({ id });
-    if (!collection) {
-      throw new NotFoundException(`게시물이 존재하지 않습니다`);
-    }
-    return collection;
+ // 특정 컬렉션 조회
+async getCollectionById(id: number): Promise<Collection> {
+  const collection = await this.collectionRepository.findOne({
+    where: { id },
+    relations: ['movies'],
+  });
+  if (!collection) {
+    throw new NotFoundException(`게시물이 존재하지 않습니다`);
   }
+  return collection;
+}
+
 
   async collectionExists(id: number): Promise<boolean> {
     const collection = await this.collectionRepository.findOneBy({ id });
