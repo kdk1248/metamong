@@ -56,12 +56,16 @@ export class MovieService {
   }
 
   async getMovieById(id: number): Promise<Movie> {
-    const movie = await this.movieRepository.findOne({ where: { id } });
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+      relations: ['collections'],
+    });
     if (!movie) {
       throw new NotFoundException(`Movie with id ${id} not found`);
     }
     return movie;
   }
+  
 
   async filterMovies(filterOptions: { genre?: string, directorId?: number, actor?: string }): Promise<MovieResponseDto[]> {
     const { genre, directorId, actor } = filterOptions;

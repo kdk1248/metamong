@@ -30,22 +30,29 @@ export class CollectionService {
 
   // 컬렉션에 특정 영화 추가
   async addMovieToCollection(collectionId: number, movieId: number): Promise<Collection> {
-    const collection = await this.collectionRepository.findOneBy({ id: collectionId });
+    const collection = await this.collectionRepository.findOne({
+      where: { id: collectionId },
+      relations: ['movies'],  // 'movies' 관계를 명시적으로 로드
+    });
+  
     if (!collection) {
       throw new NotFoundException(`컬렉션이 존재하지 않습니다`);
     }
-
+  
     const movie = await this.movieService.getMovieById(movieId);
     if (!movie) {
-      throw new NotFoundException(`영화가 존재하지 않습니다`); // 영화가 없을 때 예외 처리
+      throw new NotFoundException(`영화가 존재하지 않습니다`);
     }
-
+  
+    // 영화 ID만 추가
     collection.movies = collection.movies || [];
-
-    collection.movies.push(movie); // 배열에 추가
-
-    return this.collectionRepository.save(collection); // 변경 사항 저장
+    if (!collection.movies.some(existingMovie => existingMovie.id === movie.id)) {
+      collection.movies.push(movie); // 중복 영화가 없을 때만 추가
+    }
+  
+    return this.collectionRepository.save(collection);
   }
+  
 
   // 컬렉션에서 특정 영화 삭제
   async removeMovieFromCollection(collectionId: number, movieId: number): Promise<Collection> {
