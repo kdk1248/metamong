@@ -86,5 +86,18 @@ export class CollectionController {
     const updatedCollection = await this.collectionService.decrementFavoriteCount(id);
     return new CollectionResponseDto(updatedCollection);
   }
+
+  /// 공유된 컬렉션만 가져오는 API
+  @Get('shared')
+  async getSharedCollections() {
+    return this.collectionService.getSharedCollections();
+  }
+
+  // 컬렉션 공유 API
+  @Post('share/:id')
+  async shareCollection(@Param('id') collectionId: number) {
+    await this.collectionService.shareCollection(collectionId);
+    return { message: '컬렉션이 공유되었습니다.' };
+  }
 }
 

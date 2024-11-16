@@ -139,6 +139,24 @@ async getCollectionById(id: number): Promise<Collection> {
     return this.collectionRepository.save(collection);
   }
 
+  // 공유된 컬렉션을 가져오는 메서드
+  async getSharedCollections(): Promise<Collection[]> {
+    return this.collectionRepository.find({
+      where: { isShared: true },
+    });
+  }
 
+  // 컬렉션 공유 메서드
+  async shareCollection(collectionId: number): Promise<void> {
+    const collection = await this.collectionRepository.findOne({
+      where: { id: collectionId },
+    });
 
+    if (!collection) {
+      throw new Error('컬렉션을 찾을 수 없습니다.');
+    }
+
+    collection.isShared = true;  // isShared를 true로 업데이트
+    await this.collectionRepository.save(collection);  // 업데이트된 컬렉션 저장
+  }
 }
