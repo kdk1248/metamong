@@ -17,12 +17,16 @@ import { MovieModule } from './res/movie/movie.module';
 import { User } from './res/user/entity/user.entity';
 import { UserModule } from './res/user/user.module';
 import { CollectionModule } from './res/collection/collection.module';
+import { ChatGateway } from './res/chat/chat.gateway';
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      
       isGlobal: true, //환경 변수를 전역으로 설정
+      envFilePath: '.env',
+
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -49,7 +53,7 @@ import { CollectionModule } from './res/collection/collection.module';
     CollectionModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ChatGateway],
 })
 export class AppModule {}
 
