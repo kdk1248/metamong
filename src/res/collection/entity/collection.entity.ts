@@ -32,6 +32,9 @@ export class Collection extends CommonBigPKEntity {
 
   @Column({ type: 'bigint', default: 0 })
   favoriteCount: number;
+  
+  @Column({ default: false })
+  isShared: boolean;
 
   constructor(collectionRequestDto: CollectionRequestDto) {
     super();
