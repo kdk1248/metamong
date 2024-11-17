@@ -36,6 +36,7 @@ export class FavoriteService {
   
 
   async addFavorite(favoriteRequestDto: FavoriteRequestDto): Promise<FavoriteResponseDto> {
+    // 영화, 댓글, 컬렉션에 대한 좋아요를 추가하는 로직
     const savedFavorite = await this.favoriteRepository.addFavorite(favoriteRequestDto);
     return new FavoriteResponseDto(
       savedFavorite.id,
@@ -53,10 +54,25 @@ export class FavoriteService {
     await this.favoriteRepository.removeFavorite(favorite.id);
     return favorite;
   }
+
+  async removeFavoriteByUserAndCollection(userId: number, collectionId: number): Promise<Favorite | null> {
+    const favorite = await this.favoriteRepository.findByUserAndTarget(userId, null, null, collectionId);
+    if (!favorite) {
+      return null;
+    }
+
+    await this.favoriteRepository.removeFavorite(favorite.id);
+    return favorite;
+  }
   
   async isMovieFavoritedByUser(userId: number, movieId: number): Promise<boolean> {
     const favorite = await this.favoriteRepository.findByUserAndTarget(userId, movieId);
     return !!favorite;  // favorite이 존재하면 true, 없으면 false를 반환
+  }
+
+  async isCollectionFavoritedByUser(userId: number, collectionId: number): Promise<boolean> {
+    const favorite = await this.favoriteRepository.findByUserAndTarget(userId, null, null, collectionId);
+    return !!favorite;
   }
 
   

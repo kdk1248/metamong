@@ -41,6 +41,14 @@ export class CollectionRepository extends Repository<Collection> {
     return collection;
   }
 
+  // 공유된 컬렉션 조회
+  async getSharedCollections(): Promise<Collection[]> {
+    return this.createQueryBuilder('collection')
+      .where('collection.isShared = :isShared', { isShared: true })
+      .orderBy('collection.modifiedAt', 'DESC')
+      .getMany();
+  }
+
   // UPDATE
   async updateCollection(collectionRequestDto: CollectionRequestDto): Promise<Collection> {
     const { id, userId } = collectionRequestDto;
@@ -70,5 +78,16 @@ export class CollectionRepository extends Repository<Collection> {
       .where('collection.name LIKE :name', { name: `%${name}%` })
       .orderBy('collection.modifiedAt', 'DESC')
       .getMany();
+  }
+
+  // 공유로 설정하는 메서드
+  async shareCollection(id: number): Promise<Collection> {
+    const collection = await this.findOneBy({ id });
+    if (!collection) {
+      throw new Error(`게시물이 존재하지 않습니다`);
+    }
+
+    collection.isShared = true;
+    return this.save(collection);
   }
 }
