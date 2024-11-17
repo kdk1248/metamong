@@ -3,10 +3,18 @@ import { CollectionRequestDto } from '../dto/collection-request.dto';
 import { CollectionResponseDto } from '../dto/collection-response.dto';
 import { CollectionService } from '../service/collection.service';
 import { Collection } from '../entity/collection.entity';
+import { request, Request } from 'express';
 
 @Controller('api/collections')
 export class CollectionController {
   constructor(private readonly collectionService: CollectionService) {}
+
+  @Get('/shared')
+  async getSharedCollections(): Promise<CollectionResponseDto[]> {
+    console.log('Request URL:', request.url);
+    const collections = await this.collectionService.getSharedCollections();
+    return collections.map((collection) => new CollectionResponseDto(collection));
+  }
 
   // CREATE
   @Post()
@@ -23,6 +31,7 @@ export class CollectionController {
 
   @Get(':id')
   async getCollectionById(@Param('id') id: number): Promise<CollectionResponseDto> { 
+    console.log('Request URL:', request.url);
     const collection = await this.collectionService.getCollectionById(id);
     return new CollectionResponseDto(collection); 
   }
@@ -85,12 +94,6 @@ export class CollectionController {
   async unfavoriteCollection(@Param('id') id: number): Promise<CollectionResponseDto> {
     const updatedCollection = await this.collectionService.decrementFavoriteCount(id);
     return new CollectionResponseDto(updatedCollection);
-  }
-
-  /// 공유된 컬렉션만 가져오는 API
-  @Get('shared')
-  async getSharedCollections() {
-    return this.collectionService.getSharedCollections();
   }
 
   // 컬렉션 공유 API

@@ -24,6 +24,25 @@ export class FavoriteController {
     );
   }
 
+  @Post('add/collection')
+  async addFavoriteToCollection(@Body() favoriteRequestDto: FavoriteRequestDto): Promise<FavoriteResponseDto> {
+    const isAlreadyFavorited = await this.favoriteService.isCollectionFavoritedByUser(
+      favoriteRequestDto.userId, 
+      favoriteRequestDto.collectionId
+    );
+
+    if (isAlreadyFavorited) {
+      throw new ConflictException('이미 좋아요를 누른 컬렉션입니다.');
+    }
+
+    const savedFavorite = await this.favoriteService.addFavorite(favoriteRequestDto);
+    return new FavoriteResponseDto(
+      savedFavorite.id,
+      true,
+      '컬렉션이 관심 항목에 추가되었습니다.'
+    );
+  }
+
   @Delete('remove/:userId/:movieId')
   async removeFavorite(
     @Param('userId') userId: number,
@@ -34,6 +53,18 @@ export class FavoriteController {
       throw new NotFoundException(`userId ${userId}와 movieId ${movieId}에 대한 좋아요 항목을 찾을 수 없습니다.`);
     }
     return new FavoriteResponseDto(result.id, true, '관심 항목이 삭제되었습니다.');
+  }
+
+  @Delete('remove/collection/:userId/:collectionId')
+  async removeFavoriteFromCollection(
+    @Param('userId') userId: number,
+    @Param('collectionId') collectionId: number
+  ): Promise<FavoriteResponseDto> {
+    const result = await this.favoriteService.removeFavoriteByUserAndCollection(userId, collectionId);
+    if (!result) {
+      throw new NotFoundException(`userId ${userId}와 collectionId ${collectionId}에 대한 좋아요 항목을 찾을 수 없습니다.`);
+    }
+    return new FavoriteResponseDto(result.id, true, '컬렉션의 관심 항목이 삭제되었습니다.');
   }
 
   @Get('show/:userId')
@@ -72,5 +103,15 @@ export class FavoriteController {
   ): Promise<CheckFavoriteResponseDto> {
     const isFavorited = await this.favoriteService.isMovieFavoritedByUser(userId, movieId);
     return new CheckFavoriteResponseDto(userId, movieId, isFavorited);
+  }
+
+  // 컬렉션 좋아요 여부 확인
+  @Get('check/collection/:userId/:collectionId')
+  async checkIfCollectionFavorited(
+    @Param('userId') userId: number,
+    @Param('collectionId') collectionId: number
+  ): Promise<CheckFavoriteResponseDto> {
+    const isFavorited = await this.favoriteService.isCollectionFavoritedByUser(userId, collectionId);
+    return new CheckFavoriteResponseDto(userId, collectionId, isFavorited);
   }
 }

@@ -93,6 +93,15 @@ async getCollectionById(id: number): Promise<Collection> {
     return !!collection; // 존재하면 true, 아니면 false 반환
   }
 
+  // 컬렉션 공유 조회
+  async getSharedCollections(): Promise<Collection[]> {
+    return this.collectionRepository.find({
+      where: { isShared: true, deletedAt: null },  // 삭제되지 않은 공유된 컬렉션만 필터링
+      relations: ['movies'],
+      order: { modifiedAt: 'DESC' },  // 최신 순으로 정렬
+    });
+  }
+
   // 컬렉션 업데이트
   async updateCollection(
     id: number,
@@ -137,13 +146,6 @@ async getCollectionById(id: number): Promise<Collection> {
 
     collection.favoriteCount = Math.max((collection.favoriteCount || 0) - 1, 0);
     return this.collectionRepository.save(collection);
-  }
-
-  // 공유된 컬렉션을 가져오는 메서드
-  async getSharedCollections(): Promise<Collection[]> {
-    return this.collectionRepository.find({
-      where: { isShared: true },
-    });
   }
 
   // 컬렉션 공유 메서드
