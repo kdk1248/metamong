@@ -20,8 +20,6 @@ export class MovieService {
     private readonly httpService: HttpService,
     private readonly configService: ConfigService,
   ) {
-    // //환경 변수에서 KMDb API Key 를 가져오기
-    // this.apiKey = this.configService.get<string>('KMDB_API_KEY');
   }
 
    // KMDb API를 통해 장르별 영화 가져오기

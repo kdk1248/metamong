@@ -14,7 +14,7 @@ async function bootstrap() {
     origin: ['http://localhost:8100', 'http://localhost:4200'],
     credentials: true,
   });
-
+  
   // 정적 파일 경로 설정
   app.useStaticAssets(join(__dirname, '..', 'public'));
 

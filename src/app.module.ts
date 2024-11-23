@@ -18,6 +18,7 @@ import { User } from './res/user/entity/user.entity';
 import { UserModule } from './res/user/user.module';
 import { CollectionModule } from './res/collection/collection.module';
 import { ChatGateway } from './res/chat/chat.gateway';
+import { ChatbotModule } from './res/openai/openai.module';
 
 
 @Module({
@@ -50,7 +51,7 @@ import { ChatGateway } from './res/chat/chat.gateway';
     MovieModule,
     UserModule,
     AuthModule,
-    CollectionModule,
+    CollectionModule,ChatbotModule
   ],
   controllers: [AppController],
   providers: [AppService, ChatGateway],
