@@ -5,8 +5,8 @@ import { ChatbotService } from './openai.service';
 export class ChatbotController {
   constructor(private readonly chatbotService: ChatbotService) {}
 
-  @Post('ask')
-  async askChatbot(@Body('prompt') prompt: string) {
+  @Post('ask') 
+  async askChatbot(@Body('prompt') prompt: string): Promise<{ response: string }> {
     const response = await this.chatbotService.getChatResponse(prompt);
     return { response };
   }

@@ -1,57 +1,63 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
-import axios from 'axios';
+import OpenAI from 'openai'; // 최신 OpenAI 라이브러리 import
 import { openAIConfig } from '../config/openai.config';
 
 @Injectable()
 export class ChatbotService {
-  private chatHistory: { role: string; content: string }[] = []; // 대화 기록 저장
+  private chatHistory: { role: 'user' | 'assistant' | 'system'; content: string }[] = [];
+  private openai: OpenAI;
+  private readonly assistantId: string = 'asst_NvWjyplJ3IytPEtsbpBDw0gE'; // Assistant ID
+  private readonly maxTokens: number = 1000; // 응답 최대 토큰 수
 
+  constructor() {
+    this.openai = new OpenAI({
+      apiKey: openAIConfig.apiKey,
+    });
+  }
+
+  /**
+   * 사용자 입력을 기반으로 OpenAI API 호출
+   * @param prompt 사용자 입력
+   * @returns OpenAI 응답
+   */
   async getChatResponse(prompt: string): Promise<string> {
     try {
-      // KMDB 기반 사용자 요청을 생성
-      const kmdbPrompt = `
-      기준: 대한민국 영화
-      요청: ${prompt}
-      조건:
-      - 답변은 60글자 이내
-      - 추천/정보 제공은 KMDB 기준으로 작성
-      - 간결하고 정확하게 응답
-      `;
+      const systemMessage: { role: 'system'; content: string } = {
+        role: 'system',
+        content: `You are an assistant with ID: ${this.assistantId}. Respond within ${this.maxTokens} tokens and adjust the response to fit the limit without cutting off sentences.`,
+      };
 
-      // 새 대화 기록 배열 생성
-      const updatedChatHistory = [
-        ...this.chatHistory, // 기존 대화 기록 유지
-        { role: 'user', content: kmdbPrompt }, // 사용자 요청 추가
+      const updatedChatHistory: { role: 'user' | 'assistant' | 'system'; content: string }[] = [
+        systemMessage,
+        ...this.chatHistory.slice(-10),
+        { role: 'user', content: prompt },
       ];
 
-      const response = await axios.post(
-        openAIConfig.baseUrl,
-        {
-          model: 'gpt-3.5-turbo',
-          messages: updatedChatHistory, // 대화 기록 전달
-          max_tokens: 1000, // 응답 제한 (60글자 이내)
-          temperature: 0.8, // 창의성 조정
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${openAIConfig.apiKey}`,
-          },
-        },
-      );
+      // OpenAI API 호출
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4',
+        messages: updatedChatHistory,
+        max_tokens: this.maxTokens,
+        temperature: 0.5,
+      });
 
-      // 응답 메시지 생성
-      const assistantResponse = response.data.choices[0]?.message?.content.trim() || '응답 없음';
+      // 응답 메시지 가져오기
+      const assistantResponse = completion.choices[0]?.message?.content.trim() || '응답 없음';
 
-      // 새로운 대화 기록 배열 생성
+      // 최대 길이를 초과하지 않도록 마지막 문장을 다듬기
+      const adjustedResponse = this.adjustResponseToMaxTokens(assistantResponse, this.maxTokens);
+
       this.chatHistory = [
-        ...updatedChatHistory, // 이전 대화 기록 포함
-        { role: 'assistant', content: assistantResponse }, // OpenAI 응답 추가
+        ...updatedChatHistory,
+        { role: 'assistant', content: adjustedResponse },
       ];
 
-      return assistantResponse;
+      return adjustedResponse;
     } catch (error) {
-      console.error('Error calling OpenAI API:', error.response?.data || error.message);
+      console.error(
+        'Error calling OpenAI API:',
+        error.response?.data || error.message,
+      );
       throw new HttpException(
         'OpenAI API 호출 중 오류가 발생했습니다.',
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -60,10 +66,45 @@ export class ChatbotService {
   }
 
   /**
+   * 응답이 최대 토큰 수를 초과하지 않도록 조정
+   * @param response 원래 OpenAI 응답
+   * @param maxTokens 최대 토큰 수
+   * @returns 조정된 응답
+   */
+  private adjustResponseToMaxTokens(response: string, maxTokens: number): string {
+    const sentences = response.split(/(?<=[.!?])\s+/); // 문장 단위로 나누기
+    let adjustedResponse = '';
+    let currentTokenCount = 0;
+  
+    for (const sentence of sentences) {
+      const tokenLength = this.estimateTokenCount(sentence);
+      if (currentTokenCount + tokenLength > maxTokens) {
+        break;
+      }
+      adjustedResponse += sentence + ' ';
+      currentTokenCount += tokenLength;
+    }
+  
+    // 잘린 문장이 없으면 기본 메시지 반환
+    return adjustedResponse.trim() || '응답 생성에 실패했습니다.';
+  }
+  
+  
+
+  /**
+   * 토큰 수 추정 (대략적인 계산)
+   * @param text 문자열
+   * @returns 예상 토큰 수
+   */
+  private estimateTokenCount(text: string): number {
+    return Math.ceil(text.length / 4); // 평균적으로 한 토큰은 약 4개의 문자
+  }
+
+  /**
    * 대화 기록 초기화
    */
   clearChatHistory() {
-    this.chatHistory = []; // 대화 기록을 비워 초기화
+    this.chatHistory = [];
     console.log('Chat history cleared.');
   }
 }
