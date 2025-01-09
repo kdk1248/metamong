@@ -8,7 +8,7 @@
 # 영화 애호가 커뮤니티 모바일 웹 애플리케이션
 
 <p align="center">
-  <img src="C:\Users\user\Pictures\Screenshots\스크린샷 2025-01-09 143923.png" width="500" alt="메인 스크린샷">
+  <img src="https://github.com/kdk1248/metamong/issues/39#issue-2776886448" width="500" alt="메인 스크린샷">
 </p>
 
 ## 개요
