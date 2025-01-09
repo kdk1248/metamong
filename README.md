@@ -6,10 +6,8 @@
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
 # 영화 애호가 커뮤니티 모바일 웹 애플리케이션
+![스크린샷 2025-01-09 143923](https://github.com/user-attachments/assets/941fd6f9-b332-4742-8d31-17f025b79b91)
 
-<p align="center">
-  <img src=" ![스크린샷 2025-01-09 143923](https://github.com/user-attachments/assets/941fd6f9-b332-4742-8d31-17f025b79b91))" width="500" alt="메인 스크린샷">
-</p>
 
 ## 개요
 
