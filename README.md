@@ -8,7 +8,8 @@
 # 영화 애호가 커뮤니티 모바일 웹 애플리케이션
 
 <p align="center">
-  <img src="https://github.com/kdk1248/metamong/issues/39#issue-2776886448" width="500" alt="메인 스크린샷">
+  <img src=" ![스크린샷 2025-01-09 143923](https://private-user-images.githubusercontent.com/129379796/401408613-1263030b-d1dd-4683-90dc-8fb604416a80.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MzY0MDE4ODYsIm5iZiI6MTczNjQwMTU4NiwicGF0aCI6Ii8xMjkzNzk3OTYvNDAxNDA4NjEzLTEyNjMwMzBiLWQxZGQtNDY4My05MGRjLThmYjYwNDQxNmE4MC5wbmc_WC1BbXotQWxnb3JpdGhtPUFXUzQtSE1BQy1TSEEyNTYmWC1BbXotQ3JlZGVudGlhbD1BS0lBVkNPRFlMU0E1M1BRSzRaQSUyRjIwMjUwMTA5JTJGdXMtZWFzdC0xJTJGczMlMkZhd3M0X3JlcXVlc3QmWC1BbXotRGF0ZT0yMDI1MDEwOVQwNTQ2MjZaJlgtQW16LUV4cGlyZXM9MzAwJlgtQW16LVNpZ25hdHVyZT05N2QyNGE2NWEyZGUzNjQzZTU1ZmNhMGM2M2VjMThhN2IxODJjZDYwN2FiMmY5ZmQyMjY3ZmJiN2RiYWVkNDc4JlgtQW16LVNpZ25lZEhlYWRlcnM9aG9zdCJ9.fr2cUab7ivsUOxBWh_Um4Cnh4PrhIkWRdxzbG7PPGKs)
+" width="500" alt="메인 스크린샷">
 </p>
 
 ## 개요
