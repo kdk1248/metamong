@@ -22,7 +22,7 @@
 
 1. 저장소 클론:
    ```bash
-   git clone https://github.com/your-username/movie-enthusiasts-community.git
+   git clone https://github.com/kdk1248/metamong.git
    ```
 2. 프로젝트 디렉토리로 이동:
    ```bash
@@ -38,7 +38,7 @@
    ```
 
 ## 기술 스택
-- **데이터베이스**: KmDB
+- **데이터베이스**: MySql / KmDB
 ![image](https://github.com/user-attachments/assets/4cfd0e73-fe57-47f3-9d30-dbd6d38a4cba)
 
 
@@ -46,7 +46,7 @@
 ![image](https://github.com/user-attachments/assets/f6ce418f-4b5a-4aa1-b6d7-48831f0d1ee6)
 
 ## 저장소 링크
-
+백엔드: https://github.com/kdk1248/metamong.git
 
 
 ## 기여
