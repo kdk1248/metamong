@@ -6,8 +6,10 @@
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
 # 영화 애호가 커뮤니티 모바일 웹 애플리케이션
-![스크린샷 2025-01-09 143923](https://github.com/user-attachments/assets/941fd6f9-b332-4742-8d31-17f025b79b91)
 
+<p align="center">
+  <img src="C:\Users\user\Pictures\Screenshots\스크린샷 2025-01-09 143923.png" width="500" alt="메인 스크린샷">
+</p>
 
 ## 개요
 
@@ -45,13 +47,23 @@
    npm run start
    ```
 
+## 기술 스택
+- **데이터베이스**: KmDB
+![image](https://github.com/user-attachments/assets/4cfd0e73-fe57-47f3-9d30-dbd6d38a4cba)
+
+
+## 시스템 아키텍처
+![image](https://github.com/user-attachments/assets/f6ce418f-4b5a-4aa1-b6d7-48831f0d1ee6)
+
+## 저장소 링크
+
+
+
 ## 기여
 
 기여를 환영합니다! 저장소를 포크하고 변경 사항을 제안하려면 풀 리퀘스트를 제출하세요.
 
-## 라이선스
 
-이 프로젝트는 [MIT License](LICENSE) 하에 라이선스가 부여되었습니다.
 
 ---
 
